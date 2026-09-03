@@ -109,6 +109,37 @@ async function main() {
     r = await api('GET', '/api/products?search=hoodie&limit=50');
     check('search=hoodie returns hits', (r.json?.data?.length || 0) > 0);
 
+    r = await api('GET', '/api/products?size=XS,XXL&limit=50');
+    check(
+      'multi-size filter (size=XS,XXL) returns matches',
+      (r.json?.data?.length || 0) > 0 &&
+        r.json.data.every((p) =>
+          p.variants.some((v) => v.sizes.some((s) => ['XS', 'XXL'].includes(s.size)))
+        )
+    );
+
+    r = await api('GET', '/api/products?color=Black&color=Navy&limit=50');
+    check(
+      'repeated color param (Black + Navy) returns matches',
+      (r.json?.data?.length || 0) > 0 &&
+        r.json.data.every((p) =>
+          p.variants.some((v) => ['black', 'navy'].includes(v.color.toLowerCase()))
+        )
+    );
+
+    {
+      const all = await api('GET', '/api/products?limit=3');
+      const wantIds = all.json.data.map((p) => p._id);
+      r = await api('GET', `/api/products?ids=${wantIds.join(',')}&limit=50`);
+      const gotIds = (r.json?.data || []).map((p) => p._id).sort();
+      check(
+        'ids= filter returns exactly the requested products',
+        gotIds.length === 3 && JSON.stringify(gotIds) === JSON.stringify([...wantIds].sort())
+      );
+      r = await api('GET', '/api/products?ids=&limit=50');
+      check('ids= empty returns nothing', (r.json?.data?.length ?? -1) === 0);
+    }
+
     r = await api('GET', '/api/products?featured=true&limit=50');
     check(
       'featured=true returns only featured',

@@ -69,6 +69,9 @@ export default {
     },
 
     extend: {
+      screens: {
+        xs: '480px',
+      },
       maxWidth: {
         container: '1440px',
       },

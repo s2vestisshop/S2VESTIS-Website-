@@ -96,6 +96,7 @@ export interface ProductQuery {
   maxPrice?: number;
   size?: string;
   color?: string;
+  ids?: string;
   sort?: 'price-asc' | 'price-desc' | 'newest' | 'popularity';
   page?: number;
   limit?: number;

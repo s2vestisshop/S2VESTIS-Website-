@@ -4,6 +4,16 @@ import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 import { SORTS } from '../utils/constants.js';
 
+const escapeRegex = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Accepts `?x=a&x=b`, `?x=a,b`, or a single value → string[]. */
+const toArray = (v) =>
+  v == null
+    ? []
+    : (Array.isArray(v) ? v : String(v).split(','))
+        .map((s) => String(s).trim())
+        .filter(Boolean);
+
 const PUBLIC_FIELDS =
   'name slug description price discountPrice discountPercent effectivePrice gender variants rating isFeatured category createdAt';
 
@@ -17,6 +27,7 @@ export const listProducts = asyncHandler(async (req, res) => {
     maxPrice,
     size,
     color,
+    ids,
     sort = 'newest',
     page = 1,
     limit = 12,
@@ -24,6 +35,13 @@ export const listProducts = asyncHandler(async (req, res) => {
   } = req.query;
 
   const filter = { isActive: true };
+
+  // Fetch a specific set of products by id (wishlist hydration, etc.)
+  const idList = toArray(ids).filter((v) => /^[0-9a-fA-F]{24}$/.test(v));
+  if (ids !== undefined) {
+    // ids param present but nothing valid → return nothing
+    filter._id = { $in: idList };
+  }
 
   if (category) {
     // accept slug or id
@@ -49,8 +67,18 @@ export const listProducts = asyncHandler(async (req, res) => {
     ];
   }
 
-  if (color) filter['variants.color'] = { $regex: `^${color}$`, $options: 'i' };
-  if (size) filter['variants.sizes.size'] = { $regex: `^${size}$`, $options: 'i' };
+  const colors = toArray(color);
+  const sizes = toArray(size);
+  if (colors.length) {
+    filter['variants.color'] = {
+      $in: colors.map((c) => new RegExp(`^${escapeRegex(c)}$`, 'i')),
+    };
+  }
+  if (sizes.length) {
+    filter['variants.sizes.size'] = {
+      $in: sizes.map((s) => new RegExp(`^${escapeRegex(s)}$`, 'i')),
+    };
+  }
 
   const sortSpec = SORTS[sort] || SORTS.newest;
   const perPage = Math.min(Number(limit) || 12, 60);

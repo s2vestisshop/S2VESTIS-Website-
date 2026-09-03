@@ -53,3 +53,9 @@ export function sizesForColor(product: Product, color?: string): string[] {
 }
 
 export const PLACEHOLDER_IMAGE = PLACEHOLDER;
+
+/** <img onError> handler — swap a failed image for the placeholder once. */
+export function onImageError(e: React.SyntheticEvent<HTMLImageElement>) {
+  const img = e.currentTarget;
+  if (img.src !== PLACEHOLDER) img.src = PLACEHOLDER;
+}

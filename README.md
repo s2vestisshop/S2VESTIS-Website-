@@ -14,10 +14,10 @@ Sportswear, Sweatshirts and Hoodies for men & women.
 | --- | --- | --- |
 | 1 | Backend foundation — models, auth, product/category/cart/wishlist/admin APIs, uploads, seed | ✅ Done |
 | 2 | Frontend foundation — Vite/TS setup, Tailwind tokens, router, Redux store, API layer, Navbar + Footer + Cart Drawer shell | ✅ Done |
-| 3 | Home page — hero carousel, category showcase, featured row | ⬜ |
-| 4 | Product gallery — filters, sort, product cards | ⬜ |
-| 5 | Product detail — variants, add to cart / buy now, related | ⬜ |
-| 6 | Cart drawer + cart page + wishlist page | ⬜ |
+| 3 | Home page — hero carousel, category showcase, featured row | ✅ Done |
+| 4 | Product gallery — filters, sort, product cards | ✅ Done |
+| 5 | Product detail — variants, add to cart / buy now, related | ✅ Done |
+| 6 | Cart drawer + cart page + wishlist page | ✅ Done |
 | 7 | Auth pages + protected routes | ⬜ |
 | 8 | Admin panel — product/category CRUD, variant builder | ⬜ |
 | 9 | Polish pass — responsive QA, empty/error states, docs | ⬜ |

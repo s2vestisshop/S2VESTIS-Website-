@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { closeCartDrawer } from '@/features/ui/uiSlice';
 import { removeCartItem, updateCartItem } from '@/features/cart/cartSlice';
 import { formatPrice, pluralize } from '@/lib/format';
-import { productImage } from '@/lib/product';
+import { productImage, onImageError } from '@/lib/product';
 import { QuantityStepper } from './QuantityStepper';
 import type { CartItem } from '@/types';
 
@@ -123,6 +123,11 @@ function CartLine({
   onRemove: () => void;
 }) {
   const product = item.product;
+  const variant = product?.variants.find(
+    (v) => v.color.toLowerCase() === item.color.toLowerCase()
+  );
+  const stock =
+    variant?.sizes.find((s) => s.size.toLowerCase() === item.size.toLowerCase())?.stock ?? 0;
   return (
     <li className="flex gap-4 py-4">
       <Link
@@ -133,6 +138,7 @@ function CartLine({
           <img
             src={productImage(product)}
             alt={product.name}
+            onError={onImageError}
             className="h-full w-full object-cover"
             loading="lazy"
           />
@@ -166,7 +172,7 @@ function CartLine({
             value={item.quantity}
             onChange={onQty}
             disabled={pending}
-            max={20}
+            max={Math.max(Math.min(stock, 20), item.quantity)}
           />
           <span className="text-sm font-semibold text-ink-900">{formatPrice(item.lineTotal)}</span>
         </div>

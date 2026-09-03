@@ -73,7 +73,7 @@ Base path: `/api`. All responses are JSON `{ success, ... }`. Errors:
 ### Products (public)
 | Method | Path | Notes |
 | --- | --- | --- |
-| GET | `/products` | query: `category` (slug or id), `gender`, `search`, `minPrice`, `maxPrice`, `size`, `color`, `sort` (`price-asc`\|`price-desc`\|`newest`\|`popularity`), `page`, `limit` (≤60), `featured` |
+| GET | `/products` | query: `category` (slug or id), `gender`, `search`, `minPrice`, `maxPrice`, `size`, `color`, `ids`, `sort` (`price-asc`\|`price-desc`\|`newest`\|`popularity`), `page`, `limit` (≤60), `featured`. `size`, `color` & `ids` accept multiple values — repeat the param (`?size=S&size=M`) or comma-separate (`?color=Black,Navy`). `ids` fetches a specific set of products (wishlist hydration). |
 | GET | `/products/:slug` | full detail incl. all variants |
 | GET | `/products/:slug/related` | up to 8, same category, excludes itself |
 

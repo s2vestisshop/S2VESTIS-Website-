@@ -7,8 +7,10 @@ export const listProductsValidator = [
   query('search').optional().trim().isString(),
   query('minPrice').optional().isFloat({ min: 0 }).toFloat(),
   query('maxPrice').optional().isFloat({ min: 0 }).toFloat(),
-  query('size').optional().trim().isString(),
-  query('color').optional().trim().isString(),
+  // size / color / ids accept a single value, a repeated param, or a comma list
+  query('size').optional(),
+  query('color').optional(),
+  query('ids').optional(),
   query('sort').optional().isIn(Object.keys(SORTS)).withMessage('Invalid sort option'),
   query('page').optional().isInt({ min: 1 }).toInt(),
   query('limit').optional().isInt({ min: 1, max: 60 }).toInt(),

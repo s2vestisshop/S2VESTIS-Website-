@@ -86,3 +86,34 @@
     scrollbar-width: none;
   }
 }
+
+/* Dual-thumb price range: inputs sit on top of each other; only the thumbs
+   are interactive so both handles stay draggable. */
+.range-thumb {
+  pointer-events: none;
+}
+.range-thumb::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 9999px;
+  background: #171614;
+  border: 2px solid #faf9f6;
+  box-shadow: 0 1px 3px rgba(23, 22, 20, 0.35);
+  cursor: pointer;
+}
+.range-thumb::-moz-range-thumb {
+  pointer-events: auto;
+  height: 16px;
+  width: 16px;
+  border-radius: 9999px;
+  background: #171614;
+  border: 2px solid #faf9f6;
+  cursor: pointer;
+}
+.range-thumb:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid #b5502e;
+  outline-offset: 2px;
+}

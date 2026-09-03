@@ -1,7 +1,17 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { authApi } from '@/api';
-import { toErrorMessage } from '@/api/client';
+import { ApiRequestError, toErrorMessage } from '@/api/client';
 import type { User } from '@/types';
+
+export interface AuthRejection {
+  message: string;
+  fieldErrors?: { field: string; message: string }[];
+}
+
+const toRejection = (err: unknown): AuthRejection => ({
+  message: toErrorMessage(err),
+  fieldErrors: err instanceof ApiRequestError ? err.fieldErrors : undefined,
+});
 
 type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'guest';
 
@@ -30,7 +40,7 @@ export const login = createAsyncThunk(
     try {
       return await authApi.login(payload);
     } catch (err) {
-      return rejectWithValue(toErrorMessage(err));
+      return rejectWithValue(toRejection(err));
     }
   }
 );
@@ -41,7 +51,7 @@ export const register = createAsyncThunk(
     try {
       return await authApi.register(payload);
     } catch (err) {
-      return rejectWithValue(toErrorMessage(err));
+      return rejectWithValue(toRejection(err));
     }
   }
 );
@@ -87,7 +97,8 @@ const authSlice = createSlice({
         })
         .addCase(thunk.rejected, (state, action) => {
           state.status = 'guest';
-          state.error = (action.payload as string) ?? 'Authentication failed';
+          state.error =
+            (action.payload as AuthRejection | undefined)?.message ?? 'Authentication failed';
         });
     }
 
