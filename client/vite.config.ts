@@ -20,4 +20,16 @@ export default defineConfig({
       '/uploads': { target: API_TARGET, changeOrigin: true },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Split slow-changing vendor code so it caches across deploys.
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+          motion: ['framer-motion'],
+        },
+      },
+    },
+  },
 });

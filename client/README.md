@@ -44,21 +44,26 @@ Reusable component classes (`.btn-primary`, `.btn-outline`, `.container-page`,
 
 ```
 src/
-├── main.tsx / App.tsx          # Provider + BrowserRouter + session bootstrap
+├── main.tsx / App.tsx          # Provider + BrowserRouter + ErrorBoundary + session bootstrap
 ├── index.css                   # Tailwind layers + component classes
-├── app/                        # store.ts, typed hooks
+├── app/                        # store.ts, typed hooks, listeners.ts (merge-on-login)
 ├── features/                   # redux slices: auth, cart, wishlist, ui
 ├── api/                        # axios client + typed endpoint modules
-├── router/AppRoutes.tsx        # route table (public + protected + admin)
+├── router/AppRoutes.tsx        # route table — lazy-loaded pages, public + protected + admin
 ├── components/
-│   ├── layout/                 # Layout, Navbar, MegaMenu, Footer
-│   ├── cart/                   # CartDrawer, QuantityStepper
-│   ├── auth/ProtectedRoute.tsx
+│   ├── layout/                 # Layout (Suspense), Navbar, MegaMenu, Footer
+│   ├── cart/                   # CartDrawer, CartLineItem, OrderSummary, QuantityStepper
+│   ├── product/                # ProductCard, ProductGallery, Color/SizeSelector, Rating, …
+│   ├── gallery/                # FilterSidebar, FilterDrawer, SortDropdown, PriceRange, …
+│   ├── admin/                  # fields, Toggle, ImageUploader, VariantBuilder
+│   ├── auth/                   # ProtectedRoute, AuthCard, FormField
+│   ├── wishlist/WishlistCard.tsx
 │   ├── ui/                     # Button, Badge, Skeleton, Toaster
-│   └── common/                 # Logo, ScrollToTop, PagePlaceholder
-├── hooks/useCategories.ts
-├── lib/                        # cn, format, product, storage, nav
-├── pages/                      # one file per route (+ admin/)
+│   └── common/                 # Logo, ScrollToTop, PageFallback, ErrorBoundary
+├── hooks/                      # useCategories, useProductFilters, useDebouncedValue
+├── lib/                        # cn, format, product, storage, nav, colors, validate, adminDrafts
+├── data/heroSlides.ts          # editable hero carousel content
+├── pages/                      # one file per route (+ pages/admin/)
 └── types/                      # shared API types
 ```
 
@@ -71,4 +76,6 @@ src/
 | `wishlist` | product ids + hydrated docs | server when signed in; localStorage ids for guests, merged on login |
 | `ui` | cart drawer / mobile menu / search open, toasts | — |
 
-Session bootstrap (`App.tsx`): `fetchMe` → then `fetchCart` + `fetchWishlist`.
+- Session bootstrap (`App.tsx`): `fetchMe` → then `fetchCart` + `fetchWishlist`.
+- `app/listeners.ts` reacts to `login`/`register` fulfilled → `mergeGuestWishlist` + `fetchCart`.
+- Routes are `React.lazy`; `react`/`redux`/`framer-motion` are split into cached vendor chunks.

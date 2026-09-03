@@ -143,7 +143,7 @@ export function Navbar() {
 
           {/* right: search + icons */}
           <div className="flex items-center gap-1 sm:gap-2">
-            <form onSubmit={submitSearch} className="hidden md:block">
+            <form onSubmit={submitSearch} className="hidden lg:block">
               <label className="relative flex items-center">
                 <Search className="pointer-events-none absolute left-3 h-4 w-4 text-ink-400" />
                 <input

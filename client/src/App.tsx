@@ -5,6 +5,7 @@ import { fetchMe } from '@/features/auth/authSlice';
 import { fetchCart } from '@/features/cart/cartSlice';
 import { fetchWishlist } from '@/features/wishlist/wishlistSlice';
 import { AppRoutes } from '@/router/AppRoutes';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -22,7 +23,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <ErrorBoundary>
+        <AppRoutes />
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }

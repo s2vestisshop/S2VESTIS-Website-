@@ -1,6 +1,8 @@
+import { Suspense } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Package, Tags } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { PageFallback } from '@/components/common/PageFallback';
 
 const NAV = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -36,7 +38,9 @@ export function AdminLayout() {
       </aside>
 
       <div className="min-w-0">
-        <Outlet />
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
       </div>
     </div>
   );

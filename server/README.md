@@ -43,7 +43,7 @@ npm run dev                 # http://localhost:5050
 | `npm start` | start once |
 | `npm run seed` | wipe + reseed demo data |
 | `npm run seed:destroy` | wipe all collections |
-| `npm run smoke` | spin up an **in-memory MongoDB**, seed it, and run ~45 end-to-end API assertions (no external services needed) |
+| `npm run smoke` | spin up an **in-memory MongoDB**, seed it, and run ~49 end-to-end API assertions (no external services needed) |
 
 ## Auth model
 
