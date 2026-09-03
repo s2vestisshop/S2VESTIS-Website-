@@ -1,0 +1,85 @@
+import { api } from './client';
+import type { ApiItemResponse, ApiListResponse, Category, Pagination, Product } from '@/types';
+
+export interface AdminStats {
+  totalProducts: number;
+  activeProducts: number;
+  inactiveProducts: number;
+  totalCategories: number;
+  totalUsers: number;
+  demoOrders: number;
+  lowStockThreshold: number;
+  lowStockCount: number;
+  lowStock: { _id: string; name: string; slug: string; stock: number }[];
+}
+
+export interface AdminProductQuery {
+  search?: string;
+  category?: string;
+  status?: 'active' | 'inactive';
+  page?: number;
+  limit?: number;
+}
+
+export const adminApi = {
+  async stats(): Promise<AdminStats> {
+    const { data } = await api.get<ApiItemResponse<AdminStats>>('/admin/stats');
+    return data.data;
+  },
+
+  async listProducts(
+    query: AdminProductQuery = {}
+  ): Promise<{ products: Product[]; pagination: Pagination }> {
+    const { data } = await api.get<ApiListResponse<Product>>('/admin/products', { params: query });
+    return { products: data.data, pagination: data.pagination };
+  },
+
+  async getProduct(id: string): Promise<Product> {
+    const { data } = await api.get<ApiItemResponse<Product>>(`/admin/products/${id}`);
+    return data.data;
+  },
+
+  async createProduct(payload: Partial<Product>): Promise<Product> {
+    const { data } = await api.post<ApiItemResponse<Product>>('/admin/products', payload);
+    return data.data;
+  },
+
+  async updateProduct(id: string, payload: Partial<Product>): Promise<Product> {
+    const { data } = await api.put<ApiItemResponse<Product>>(`/admin/products/${id}`, payload);
+    return data.data;
+  },
+
+  async deleteProduct(id: string): Promise<void> {
+    await api.delete(`/admin/products/${id}`);
+  },
+
+  async listCategories(): Promise<Category[]> {
+    const { data } = await api.get<ApiItemResponse<Category[]>>('/admin/categories');
+    return data.data;
+  },
+
+  async createCategory(payload: Partial<Category>): Promise<Category> {
+    const { data } = await api.post<ApiItemResponse<Category>>('/admin/categories', payload);
+    return data.data;
+  },
+
+  async updateCategory(id: string, payload: Partial<Category>): Promise<Category> {
+    const { data } = await api.put<ApiItemResponse<Category>>(`/admin/categories/${id}`, payload);
+    return data.data;
+  },
+
+  async deleteCategory(id: string): Promise<void> {
+    await api.delete(`/admin/categories/${id}`);
+  },
+
+  async upload(files: File[]): Promise<string[]> {
+    const form = new FormData();
+    files.forEach((f) => form.append('images', f));
+    const { data } = await api.post<{ success: boolean; storage: string; urls: string[] }>(
+      '/admin/upload',
+      form,
+      { headers: { 'Content-Type': 'multipart/form-data' } }
+    );
+    return data.urls;
+  },
+};
