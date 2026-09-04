@@ -61,9 +61,22 @@ export function OrderDetailPage() {
               </div>
             </div>
 
-            <p className="mt-4 rounded-card bg-clay-50 px-3 py-2 text-xs text-clay-700">
-              This is a demonstration order — no payment was taken and nothing will ship.
-            </p>
+            {order.address && (
+              <div className="mt-6 rounded-card border border-ink-100 bg-surface p-4">
+                <p className="text-xs font-semibold uppercase tracking-widest text-ink-400">
+                  Delivery address
+                </p>
+                <p className="mt-1.5 text-sm text-ink-700">
+                  {order.address.fullName} · {order.address.phone}
+                  <br />
+                  {order.address.line1}
+                  {order.address.line2 ? `, ${order.address.line2}` : ''}
+                  <br />
+                  {order.address.city}
+                  {order.address.state ? `, ${order.address.state}` : ''} {order.address.postalCode}
+                </p>
+              </div>
+            )}
 
             <div className="mt-6 rounded-card border border-ink-100 bg-surface">
               <ul className="divide-y divide-ink-100">

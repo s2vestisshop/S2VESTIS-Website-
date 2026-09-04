@@ -1,6 +1,6 @@
 export const GENDERS = ['men', 'women', 'unisex'];
 export const ROLES = ['user', 'admin'];
-export const ORDER_STATUS = ['demo-placed'];
+export const ORDER_STATUS = ['demo-placed', 'pending-payment', 'paid', 'fulfilled', 'cancelled', 'refunded'];
 
 export const CATEGORY_NAMES = [
   'T-Shirts',

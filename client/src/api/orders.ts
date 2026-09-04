@@ -2,10 +2,8 @@ import { api } from './client';
 import type { ApiItemResponse, Order } from '@/types';
 
 export const ordersApi = {
-  async create(): Promise<Order> {
-    const { data } = await api.post<ApiItemResponse<Order>>('/orders');
-    return data.data;
-  },
+  // Orders are created by paymentsApi.verify now — only after a Razorpay
+  // payment is confirmed — not directly here.
 
   async list(): Promise<Order[]> {
     const { data } = await api.get<ApiItemResponse<Order[]>>('/orders');

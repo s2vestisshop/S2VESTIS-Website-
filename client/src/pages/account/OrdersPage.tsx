@@ -11,6 +11,18 @@ import type { Order } from '@/types';
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
+// TODO(Phase 11): extract into a shared lib/orderStatus.ts once the admin
+// orders view needs the same mapping (+ shipped/out_for_delivery/delivered
+// and per-status badge colors).
+const STATUS_LABEL: Record<string, string> = {
+  'demo-placed': 'Placed',
+  'pending-payment': 'Pending payment',
+  paid: 'Paid',
+  fulfilled: 'Fulfilled',
+  cancelled: 'Cancelled',
+  refunded: 'Refunded',
+};
+
 export function OrdersPage() {
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -29,9 +41,6 @@ export function OrdersPage() {
           ← Account
         </Link>
         <h1 className="mt-3 text-3xl font-bold text-ink-900">Orders</h1>
-        <p className="mt-1.5 text-sm text-ink-400">
-          Demo orders only — no payments taken, nothing ships.
-        </p>
 
         {error && (
           <p className="mt-6 rounded-card border border-danger/30 bg-danger/5 px-4 py-2.5 text-sm text-danger">
@@ -53,7 +62,7 @@ export function OrdersPage() {
               <Package className="h-7 w-7 text-ink-400" />
             </div>
             <p className="text-lg font-semibold text-ink-900">No orders yet</p>
-            <p className="mt-1 text-sm text-ink-500">Place a demo order from checkout to see it here.</p>
+            <p className="mt-1 text-sm text-ink-500">Orders you place will show up here.</p>
             <Link to="/products" className="btn-primary mt-6">
               Start shopping
             </Link>
@@ -87,7 +96,7 @@ export function OrdersPage() {
                     </p>
                   </div>
                   <span className="rounded-pill bg-sage-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sage-700">
-                    Placed
+                    {STATUS_LABEL[o.status] ?? o.status}
                   </span>
                   <ChevronRight className="h-4 w-4 text-ink-400" />
                 </Link>

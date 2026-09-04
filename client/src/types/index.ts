@@ -93,14 +93,58 @@ export interface OrderItem {
   price: number;
 }
 
+export interface Address {
+  fullName: string;
+  phone: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  state?: string;
+  postalCode: string;
+  country?: string;
+}
+
+export type OrderStatus =
+  | 'demo-placed'
+  | 'pending-payment'
+  | 'paid'
+  | 'fulfilled'
+  | 'cancelled'
+  | 'refunded';
+
 export interface Order {
   _id: string;
   orderNumber: string;
   items: OrderItem[];
   itemCount: number;
   total: number;
-  status: 'demo-placed';
+  status: OrderStatus;
+  address: Address | null;
+  paymentMethod: string | null;
+  paidAt: string | null;
+  paymentReviewRequired: boolean;
   createdAt: string;
+}
+
+// ---- payments (Razorpay) ----
+export interface CheckoutQuote {
+  razorpayOrderId: string;
+  amount: number;
+  currency: string;
+  keyId: string;
+  orderSummary: {
+    subtotal: number;
+    discountTotal: number;
+    shippingTotal: number;
+    total: number;
+    itemCount: number;
+  };
+}
+
+export interface VerifyPaymentInput {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
 }
 
 export interface WishlistPayload {

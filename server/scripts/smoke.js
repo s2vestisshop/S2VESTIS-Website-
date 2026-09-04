@@ -230,29 +230,51 @@ async function main() {
     r = await api('DELETE', `/api/wishlist/remove/${detail._id}`);
     check('wishlist remove → 0', r.json?.data?.count === 0);
 
-    // ---- demo orders (user still has 3 cart items from the merge) ----
+    // ---- payments (user still has 3 cart items from the merge) ----
+    // Orders are no longer created directly — only via a verified Razorpay
+    // payment (see paymentController.js). This whole block needs real
+    // Razorpay TEST-mode keys in server/.env (RAZORPAY_KEY_ID/SECRET) —
+    // createCheckout calls Razorpay's real API to size an order.
     r = await api('POST', '/api/orders');
+    check('POST /api/orders (removed demo route) → 404', r.status === 404);
+
+    const checkoutAddress = {
+      fullName: 'Smoke Tester',
+      phone: '9876543210',
+      line1: '1 Test Lane',
+      city: 'Mumbai',
+      state: 'MH',
+      postalCode: '400001',
+    };
+    r = await api('POST', '/api/payments/checkout', { address: checkoutAddress });
     check(
-      'POST /api/orders → 201 with orderNumber + itemCount',
-      r.status === 201 &&
-        /^S2V-[0-9A-F]{6}$/.test(r.json?.data?.orderNumber || '') &&
-        r.json.data.itemCount === 3 &&
-        r.json.data.status === 'demo-placed'
+      'POST /api/payments/checkout → 201 with a Razorpay order',
+      r.status === 201 && !!r.json?.data?.razorpayOrderId && !!r.json?.data?.keyId,
+      JSON.stringify(r.json)
     );
-    const placedOrderId = r.json?.data?._id;
+    check(
+      'checkout quote covers all 3 cart items',
+      r.json?.data?.orderSummary?.itemCount === 3,
+      `got ${r.json?.data?.orderSummary?.itemCount}`
+    );
+    const razorpayOrderId = r.json?.data?.razorpayOrderId;
 
     r = await api('GET', '/api/cart');
-    check('cart is emptied after placing an order', r.json?.cart?.count === 0);
+    check(
+      'cart is untouched by checkout (no order/stock change until payment is verified)',
+      r.json?.cart?.count === 3,
+      `count ${r.json?.cart?.count}`
+    );
 
-    r = await api('POST', '/api/orders');
-    check('POST /api/orders with empty cart → 400', r.status === 400);
+    r = await api('POST', '/api/payments/verify', {
+      razorpay_order_id: razorpayOrderId,
+      razorpay_payment_id: 'pay_smoketest_fake',
+      razorpay_signature: 'not-a-real-signature',
+    });
+    check('verify with a forged signature → 400', r.status === 400);
 
     r = await api('GET', '/api/orders');
-    check('GET /api/orders lists the placed order', Array.isArray(r.json?.data) && r.json.data.some((o) => o._id === placedOrderId));
-
-    r = await api('GET', `/api/orders/${placedOrderId}`);
-    check('GET /api/orders/:id returns the order', r.json?.data?._id === placedOrderId);
-    check('order item snapshot has product name/slug', !!r.json?.data?.items?.[0]?.name);
+    check('no order was created from the forged verify attempt', r.json?.data?.length === 0);
 
     r = await api('GET', '/api/admin/stats');
     check('normal user hits /api/admin → 403', r.status === 403);

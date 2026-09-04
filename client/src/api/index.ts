@@ -5,4 +5,5 @@ export { categoriesApi } from './categories';
 export { cartApi } from './cart';
 export { wishlistApi } from './wishlist';
 export { ordersApi } from './orders';
+export { paymentsApi } from './payments';
 export { adminApi } from './admin';

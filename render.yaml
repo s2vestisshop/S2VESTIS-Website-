@@ -37,6 +37,14 @@ services:
         sync: false
       - key: CLOUDINARY_API_SECRET
         sync: false
+      # Razorpay dashboard → Settings → API Keys / Webhooks. Required — the
+      # API won't start without the first two set.
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: RAZORPAY_WEBHOOK_SECRET
+        sync: false
       - key: SEED_ADMIN_EMAIL
         value: admin@s2vestis.com
       - key: SEED_ADMIN_PASSWORD

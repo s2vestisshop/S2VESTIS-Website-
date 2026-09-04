@@ -30,7 +30,17 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '1mb' }));
+// `verify` stashes the raw bytes alongside normal parsing — needed to check
+// the Razorpay webhook's HMAC signature, which is computed over the exact
+// raw body, not the re-serialized parsed object.
+app.use(
+  express.json({
+    limit: '1mb',
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan(isProd ? 'combined' : 'dev'));

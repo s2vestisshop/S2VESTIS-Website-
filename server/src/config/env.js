@@ -25,6 +25,12 @@ export const env = {
     apiSecret: process.env.CLOUDINARY_API_SECRET || '',
   },
 
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || '',
+    keySecret: process.env.RAZORPAY_KEY_SECRET || '',
+    webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || '',
+  },
+
   seed: {
     adminName: process.env.SEED_ADMIN_NAME || 'Admin',
     adminEmail: process.env.SEED_ADMIN_EMAIL || 'admin@s2vestis.com',
@@ -37,5 +43,7 @@ export const env = {
 export const isCloudinaryConfigured = Boolean(
   env.cloudinary.cloudName && env.cloudinary.apiKey && env.cloudinary.apiSecret
 );
+
+export const isRazorpayConfigured = Boolean(env.razorpay.keyId && env.razorpay.keySecret);
 
 export const isProd = env.nodeEnv === 'production';
