@@ -19,6 +19,17 @@ const CheckoutPage = named(() => import('@/pages/CheckoutPage'), 'CheckoutPage')
 const LoginPage = named(() => import('@/pages/LoginPage'), 'LoginPage');
 const RegisterPage = named(() => import('@/pages/RegisterPage'), 'RegisterPage');
 const AccountPage = named(() => import('@/pages/AccountPage'), 'AccountPage');
+const OrdersPage = named(() => import('@/pages/account/OrdersPage'), 'OrdersPage');
+const OrderDetailPage = named(() => import('@/pages/account/OrderDetailPage'), 'OrderDetailPage');
+const SizeGuidePage = named(() => import('@/pages/SizeGuidePage'), 'SizeGuidePage');
+
+const AboutPage = named(() => import('@/pages/info/StaticPages'), 'AboutPage');
+const SustainabilityPage = named(() => import('@/pages/info/StaticPages'), 'SustainabilityPage');
+const StoresPage = named(() => import('@/pages/info/StaticPages'), 'StoresPage');
+const ShippingReturnsPage = named(() => import('@/pages/info/StaticPages'), 'ShippingReturnsPage');
+const TrackOrderPage = named(() => import('@/pages/info/StaticPages'), 'TrackOrderPage');
+const ContactPage = named(() => import('@/pages/info/ContactPage'), 'ContactPage');
+const FaqPage = named(() => import('@/pages/info/FaqPage'), 'FaqPage');
 
 const AdminLayout = named(() => import('@/pages/admin/AdminLayout'), 'AdminLayout');
 const AdminDashboardPage = named(
@@ -51,11 +62,37 @@ export function AppRoutes() {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
+        {/* content pages */}
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FaqPage />} />
+        <Route path="shipping" element={<ShippingReturnsPage />} />
+        <Route path="size-guide" element={<SizeGuidePage />} />
+        <Route path="stores" element={<StoresPage />} />
+        <Route path="sustainability" element={<SustainabilityPage />} />
+        <Route path="track" element={<TrackOrderPage />} />
+
         <Route
           path="account"
           element={
             <ProtectedRoute>
               <AccountPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="account/orders"
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="account/orders/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
             </ProtectedRoute>
           }
         />

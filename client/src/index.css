@@ -60,6 +60,29 @@
       after:bg-current after:transition-all after:duration-300 hover:after:w-full;
   }
 
+  /* Static content pages (About, FAQ, policies, size guide) */
+  .prose-page {
+    @apply text-[15px] leading-relaxed text-ink-600;
+  }
+  .prose-page h2 {
+    @apply mb-3 mt-10 text-lg font-bold text-ink-900 first:mt-0;
+  }
+  .prose-page h3 {
+    @apply mb-2 mt-6 text-base font-semibold text-ink-900;
+  }
+  .prose-page p {
+    @apply mb-4;
+  }
+  .prose-page ul {
+    @apply mb-4 list-disc space-y-1.5 pl-5;
+  }
+  .prose-page a {
+    @apply font-medium text-clay-600 underline underline-offset-2 hover:text-clay-700;
+  }
+  .prose-page strong {
+    @apply font-semibold text-ink-800;
+  }
+
   /* Loading skeleton shimmer */
   .skeleton {
     @apply relative overflow-hidden bg-ink-100/70;

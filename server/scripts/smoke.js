@@ -237,6 +237,32 @@ async function main() {
     r = await api('DELETE', `/api/wishlist/remove/${detail._id}`);
     check('wishlist remove → 0', r.json?.data?.count === 0);
 
+    // ---- demo orders (user still has 3 cart items from the merge) ----
+    r = await api('POST', '/api/orders');
+    check(
+      'POST /api/orders → 201 with orderNumber + itemCount',
+      r.status === 201 &&
+        /^S2V-[0-9A-F]{6}$/.test(r.json?.data?.orderNumber || '') &&
+        r.json.data.itemCount === 3 &&
+        r.json.data.status === 'demo-placed'
+    );
+    const placedOrderId = r.json?.data?._id;
+
+    r = await api('GET', '/api/cart');
+    check('cart is emptied after placing an order', r.json?.cart?.count === 0);
+
+    r = await api('POST', '/api/orders');
+    check('POST /api/orders with empty cart → 400', r.status === 400);
+
+    r = await api('GET', '/api/orders');
+    check(
+      'GET /api/orders lists the placed order',
+      Array.isArray(r.json?.data) && r.json.data.some((o) => o._id === placedOrderId)
+    );
+
+    r = await api('GET', `/api/orders/${placedOrderId}`);
+    check('GET /api/orders/:id returns the order', r.json?.data?._id === placedOrderId);
+
     r = await api('GET', '/api/admin/stats');
     check('normal user hits /api/admin → 403', r.status === 403);
 
@@ -306,6 +332,9 @@ async function main() {
     check('logout → 200', r.status === 200);
     r = await api('GET', '/api/auth/me');
     check('after logout, me → null user', r.json?.user === null);
+
+    r = await api('GET', '/api/orders');
+    check('GET /api/orders as guest → 401', r.status === 401);
   } finally {
     server.close();
     await disconnectDB();

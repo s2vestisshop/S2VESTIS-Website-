@@ -82,6 +82,27 @@ export interface User {
   createdAt?: string;
 }
 
+export interface OrderItem {
+  product: string;
+  name: string;
+  slug: string;
+  image: string;
+  color: string;
+  size: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Order {
+  _id: string;
+  orderNumber: string;
+  items: OrderItem[];
+  itemCount: number;
+  total: number;
+  status: 'demo-placed';
+  createdAt: string;
+}
+
 export interface WishlistPayload {
   _id: string;
   products: Product[];

@@ -5,12 +5,14 @@ Shirts, Sportswear, Sweatshirts and Hoodies for men & women.
 
 **Monorepo** — [`server/`](server) (Node + Express 5 + MongoDB) · [`client/`](client) (Vite + React 19 + TypeScript + Tailwind + Redux Toolkit).
 
-> **Out of scope for this build:** payment gateways, the checkout payment flow,
-> and order tracking / shipment status. `/checkout` is a demo confirmation only
-> and the `Order` model is a stub. These are planned for a follow-up.
+> **Out of scope for this build:** real payment capture / a payment gateway, and
+> live shipment tracking. `/checkout` places a **demo order** (no payment) that a
+> signed-in user can see under *Account → Orders*; there is no fulfilment status.
+> A real payment + delivery flow is a planned follow-up.
 
 Built in 9 phases — backend foundation → frontend foundation → home → gallery →
-product detail → cart & wishlist → auth → admin → polish. **All complete.**
+product detail → cart & wishlist → auth → admin → polish — plus content pages,
+a size guide, and demo order history. **All complete.**
 
 ---
 
@@ -70,8 +72,10 @@ per-size stock, discounts and featured flags.
   (localStorage) and syncs to the account on login.
 - Checkout: demo-only cart review → "Order placed (demo)" confirmation.
 - Auth: `/login` + `/register` with inline + server-side validation, redirect-back
-  to the page you came from, `/account` overview.
+  to the page you came from, `/account` overview with **demo order history**.
 - Guest **cart and wishlist merge into the account on login/register**.
+- Size guide (modal from any product page + `/size-guide`), and content pages:
+  About, Contact, FAQ, Shipping & Returns, Stores, Sustainability.
 
 **Admin** (`/admin`, role `admin` only)
 - Dashboard: product / category / user counts + low-stock list.
@@ -107,7 +111,7 @@ S2VESTIS-Website/
 ├── server/                     # Express API
 │   ├── seed.js                 # CLI → src/seed/seedData.js
 │   ├── scripts/
-│   │   ├── smoke.js            # in-memory end-to-end API test (49 assertions)
+│   │   ├── smoke.js            # in-memory end-to-end API test (55 assertions)
 │   │   └── dev-mem.js          # run the API on a throwaway in-memory MongoDB
 │   └── src/
 │       ├── app.js  server.js
@@ -132,7 +136,7 @@ Frontend design tokens & architecture → [`client/README.md`](client/README.md)
 ## Verify
 
 ```bash
-cd server && npm run smoke     # spins up in-memory MongoDB, seeds it, runs 49 API assertions
+cd server && npm run smoke     # spins up in-memory MongoDB, seeds it, runs 55 API assertions
 cd client && npm run build     # tsc typecheck + production build
 cd client && npm run lint      # eslint
 ```

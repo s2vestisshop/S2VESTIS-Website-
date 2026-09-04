@@ -49,8 +49,7 @@ export function AccountPage() {
             to="/account/orders"
             icon={Package}
             label="Orders"
-            meta="Order history — coming soon"
-            disabled
+            meta="Your demo order history"
           />
           {user.role === 'admin' && (
             <AccountTile to="/admin" icon={LayoutDashboard} label="Admin panel" meta="Manage catalogue" />

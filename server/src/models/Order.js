@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 import { ORDER_STATUS } from '../utils/constants.js';
 
 /**
- * STUB ONLY — no real checkout/payment flow in this build.
- * Kept so the demo /checkout can persist a placeholder record later.
+ * DEMO orders only — no payment capture, no fulfilment / shipment tracking.
+ * `/checkout` persists one of these for a logged-in user so the account page
+ * can show an order history. Status is always "demo-placed".
  */
 const orderItemSnapshotSchema = new mongoose.Schema(
   {
@@ -22,7 +23,9 @@ const orderItemSnapshotSchema = new mongoose.Schema(
 const orderSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    orderNumber: { type: String, required: true, unique: true },
     items: { type: [orderItemSnapshotSchema], default: [] },
+    itemCount: { type: Number, required: true, min: 1 },
     total: { type: Number, required: true, min: 0 },
     status: { type: String, enum: ORDER_STATUS, default: 'demo-placed' },
   },

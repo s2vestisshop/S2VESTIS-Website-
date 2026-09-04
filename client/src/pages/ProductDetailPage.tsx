@@ -14,6 +14,7 @@ import { Rating } from '@/components/product/Rating';
 import { PriceTag } from '@/components/product/PriceTag';
 import { WishlistButton } from '@/components/product/WishlistButton';
 import { DetailsAccordion } from '@/components/product/DetailsAccordion';
+import { SizeGuideModal } from '@/components/product/SizeGuide';
 import { ProductCarousel } from '@/components/product/ProductCarousel';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { NotFoundPage } from './NotFoundPage';
@@ -35,6 +36,7 @@ export function ProductDetailPage() {
   const [sizeError, setSizeError] = useState(false);
   const [busy, setBusy] = useState(false);
   const [added, setAdded] = useState(false);
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -219,9 +221,7 @@ export function ProductDetailPage() {
                 setSize(s);
                 setSizeError(false);
               }}
-              onSizeGuide={() =>
-                dispatch(pushToast('Size guide coming soon', 'info'))
-              }
+              onSizeGuide={() => setSizeGuideOpen(true)}
               error={sizeError}
             />
 
@@ -300,6 +300,8 @@ export function ProductDetailPage() {
       <div className="mt-20">
         <ProductCarousel title="You may also like" products={related} />
       </div>
+
+      {sizeGuideOpen && <SizeGuideModal onClose={() => setSizeGuideOpen(false)} />}
     </div>
   );
 }

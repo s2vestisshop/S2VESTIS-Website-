@@ -1,0 +1,30 @@
+# S2VESTIS · Supabase local config
+# `supabase start` needs Docker. To use a hosted project instead:
+#   supabase link --project-ref <ref>
+#   supabase db push          # applies ./migrations
+#   (seed ./seed.sql manually via the SQL editor, or `supabase db reset --linked`)
+
+project_id = "s2vestis"
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[studio]
+enabled = true
+port = 54323
+
+# Supabase Auth is NOT used — the Express API keeps its own bcrypt + JWT auth.
+[auth]
+enabled = false

@@ -2,8 +2,9 @@
 
 Node.js + Express 5 + MongoDB (Mongoose) REST API for the S2VESTIS apparel store.
 
-> **Out of scope (this build):** payment gateway, checkout payment flow, order
-> tracking/shipment status. The `Order` model exists as a stub only.
+> **Out of scope (this build):** real payment capture / a payment gateway, and
+> live shipment tracking. `POST /orders` records a **demo order** (no payment,
+> status always `demo-placed`) so a signed-in user has an order history.
 
 ## Requirements
 
@@ -43,7 +44,7 @@ npm run dev                 # http://localhost:5050
 | `npm start` | start once |
 | `npm run seed` | wipe + reseed demo data |
 | `npm run seed:destroy` | wipe all collections |
-| `npm run smoke` | spin up an **in-memory MongoDB**, seed it, and run ~49 end-to-end API assertions (no external services needed) |
+| `npm run smoke` | spin up an **in-memory MongoDB**, seed it, and run ~55 end-to-end API assertions (no external services needed) |
 
 ## Auth model
 
@@ -100,6 +101,14 @@ Stock is validated on add/update against the product's variant/size.
 | GET | `/wishlist` | – |
 | POST | `/wishlist/add` | `{ productId }` |
 | DELETE | `/wishlist/remove/:productId` | – |
+
+### Orders — **demo only** (auth required)
+No payment capture, no fulfilment / shipment tracking. `status` is always `demo-placed`.
+| Method | Path | Notes |
+| --- | --- | --- |
+| POST | `/orders` | snapshots the user's cart into an order, **clears the cart**, returns `{ orderNumber, items, itemCount, total, status }`; 400 if the cart is empty |
+| GET | `/orders` | the current user's orders, newest first |
+| GET | `/orders/:id` | one of the user's own orders |
 
 ### Admin (auth required, `role: "admin"`)
 | Method | Path | Notes |
