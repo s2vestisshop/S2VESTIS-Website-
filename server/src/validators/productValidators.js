@@ -28,7 +28,7 @@ const variantSchemaValidator = body('variants')
 export const createProductValidator = [
   body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 140 }),
   body('description').optional().isString().isLength({ max: 5000 }),
-  body('category').trim().notEmpty().withMessage('Category is required').isMongoId(),
+  body('category').trim().notEmpty().withMessage('Category is required').isUUID(),
   body('gender').optional().isIn(GENDERS),
   body('price').isFloat({ min: 0 }).withMessage('Price must be a positive number').toFloat(),
   body('discountPrice')
@@ -55,10 +55,10 @@ export const createProductValidator = [
 ];
 
 export const updateProductValidator = [
-  param('id').isMongoId().withMessage('Invalid product id'),
+  param('id').isUUID().withMessage('Invalid product id'),
   body('name').optional().trim().notEmpty().isLength({ max: 140 }),
   body('description').optional().isString().isLength({ max: 5000 }),
-  body('category').optional().trim().isMongoId(),
+  body('category').optional().trim().isUUID(),
   body('gender').optional().isIn(GENDERS),
   body('price').optional().isFloat({ min: 0 }).toFloat(),
   body('discountPrice')
@@ -71,4 +71,4 @@ export const updateProductValidator = [
   body('variants').optional().isArray({ min: 1 }),
 ];
 
-export const idParamValidator = [param('id').isMongoId().withMessage('Invalid id')];
+export const idParamValidator = [param('id').isUUID().withMessage('Invalid id')];

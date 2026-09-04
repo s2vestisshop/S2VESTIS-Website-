@@ -47,8 +47,10 @@ Add to `server/.env`:
 ```
 SUPABASE_URL=https://<ref>.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=<service_role key from Project Settings → API>
-# (MONGO_URI is no longer used once the backend is switched over)
 ```
+
+That's the whole database config — the Express API (`server/src/db/`) talks to
+Postgres exclusively through `@supabase/supabase-js` and the RPC functions below.
 
 ## Schema map
 
@@ -75,6 +77,16 @@ are **generated columns** — no application logic needed to keep them in sync.
 | `validate_coupon(code, subtotal, user_id)` → `(valid, discount, message)` | coupon check |
 | `merge_guest_cart(guest_token, user_id)` | login/register cart merge (qty summed, capped 99) |
 | `place_order(cart_id, user_id, coupon_code, address_jsonb)` → `order_id` | **atomic** demo checkout: locks stock, validates, decrements, snapshots items, applies coupon + records redemption, clears the cart, queues the confirmation email. Raises `P0001` with prefixes `EMPTY_CART` / `INSUFFICIENT_STOCK:<name>:<size>` / `INVALID_COUPON:<msg>`. |
+| `product_json(product_row)` | shapes one product row (+ variants/images/sizes/category) into the exact camelCase JSON the frontend expects — the single source of truth every other product-returning function builds on |
+| `list_products(...)` / `admin_list_products(...)` | paginated gallery / admin table, with the "product has at least one matching variant" size/colour filter semantics that plain PostgREST embedding can't express |
+| `get_product_detail(slug)` / `related_products(slug, limit)` / `admin_get_product(id)` | single-product reads |
+| `list_categories(with_counts)` / `admin_list_categories()` | category lists (public: active only + optional product counts; admin: all) |
+| `get_cart_state(user_id, guest_token)` / `get_wishlist_state(user_id)` | fully-shaped cart / wishlist for the API response |
+| `admin_stats()` | dashboard counts + low-stock list |
+| `admin_create_product(payload)` / `admin_update_product(id, payload)` | atomic create/update **including the whole variant → images → sizes tree** in one transaction |
+| `reseed_demo_data(admin_password_hash, user_password_hash)` | wipes and reloads all demo data — what `npm run seed`, `npm run smoke`, and `seed.sql` call |
+
+All of the above are `service_role`-only (revoked from `anon`/`authenticated`) except the four read-only search/coupon helpers, which are safe for any client to call directly.
 
 ## Still needs a worker / Edge Function
 
@@ -98,3 +110,9 @@ are **generated columns** — no application logic needed to keep them in sync.
 | `…0007_engagement_email` | stock_notifications, recently_viewed, newsletter, contact, email_outbox, restock trigger |
 | `…0008_functions` | search, `validate_coupon`, `merge_guest_cart`, `place_order` |
 | `…0009_rls` | enable RLS everywhere; public read policies; function grants |
+| `…0010_reseed_function` | `reseed_demo_data()` — wraps the demo seed as a callable RPC (used by `npm run seed` / `npm run smoke`, and `seed.sql`) |
+| `…0011_product_queries` | `product_json()`, `list_products()`, `get_product_detail()`, `related_products()`, `admin_list_products()` — shape a product (+ variants/images/sizes/category) into the exact JSON the frontend expects, and centralise gallery filtering |
+| `…0012_more_queries` | `list_categories()`, `admin_list_categories()`, `get_cart_state()`, `get_wishlist_state()`, `admin_stats()`, `admin_create_product()` / `admin_update_product()` (atomic — replace the whole variant tree) |
+| `…0013_admin_get_product` | `admin_get_product()` — single product by id for the admin edit form |
+| `…0014_rename_role_customer_to_user` | aligns `user_role`'s label with the frontend's `Role` type (`'user' \| 'admin'`) |
+| `…0015_fix_size_order` | `product_json()` fix — order variant sizes by apparel order (XS…XXL), not alphabetically |

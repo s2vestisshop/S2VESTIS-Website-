@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import ApiError from '../utils/ApiError.js';
 import { isProd } from '../config/env.js';
 
@@ -12,27 +11,28 @@ export function errorHandler(err, _req, res, _next) {
   let message = err.message || 'Internal server error';
   let errors = err.errors;
 
-  // Mongoose: bad ObjectId
-  if (err instanceof mongoose.Error.CastError) {
+  // Postgres: invalid input syntax (e.g. a malformed uuid slipping past validation)
+  if (err.pgCode === '22P02') {
     statusCode = 400;
-    message = `Invalid ${err.path}: ${err.value}`;
+    message = 'Invalid value in request';
   }
 
-  // Mongoose: schema validation
-  if (err instanceof mongoose.Error.ValidationError) {
+  // Postgres: unique_violation
+  if (err.pgCode === '23505') {
+    statusCode = 409;
+    message = 'A record with that value already exists';
+  }
+
+  // Postgres: foreign_key_violation (e.g. deleting a still-referenced row)
+  if (err.pgCode === '23503') {
+    statusCode = 400;
+    message = 'This record is still referenced by other data';
+  }
+
+  // Postgres: check_violation / not_null_violation
+  if (err.pgCode === '23514' || err.pgCode === '23502') {
     statusCode = 400;
     message = 'Validation failed';
-    errors = Object.values(err.errors).map((e) => ({
-      field: e.path,
-      message: e.message,
-    }));
-  }
-
-  // Mongo: duplicate key
-  if (err.code === 11000) {
-    statusCode = 409;
-    const field = Object.keys(err.keyValue || {})[0] || 'field';
-    message = `A record with that ${field} already exists`;
   }
 
   // JWT

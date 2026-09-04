@@ -9,7 +9,7 @@ export const createCategoryValidator = [
 ];
 
 export const updateCategoryValidator = [
-  param('id').isMongoId().withMessage('Invalid category id'),
+  param('id').isUUID().withMessage('Invalid category id'),
   body('name').optional().trim().notEmpty().isLength({ max: 60 }),
   body('gender').optional().isIn(GENDERS),
   body('image').optional().isString(),

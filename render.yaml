@@ -1,0 +1,47 @@
+# Render Blueprint for the S2VESTIS API.
+# Dashboard → New → Blueprint → point at this repo → Render reads this file.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: s2vestis-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set for real in the Render dashboard (Environment tab) — do not commit secrets here.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: COOKIE_SECURE
+        value: "true"
+      # The deployed frontend origin (e.g. https://s2vestis.vercel.app) — used for CORS.
+      - key: CLIENT_URL
+        sync: false
+      # Optional: leave blank to fall back to local disk (ephemeral on Render —
+      # uploaded images are lost on redeploy unless these are set).
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: SEED_ADMIN_EMAIL
+        value: admin@s2vestis.com
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      - key: SEED_USER_EMAIL
+        value: user@s2vestis.com
+      - key: SEED_USER_PASSWORD
+        sync: false

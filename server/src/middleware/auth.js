@@ -1,7 +1,7 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/ApiError.js';
 import { AUTH_COOKIE, verifyToken } from '../utils/token.js';
-import User from '../models/User.js';
+import { findById } from '../db/users.js';
 
 /**
  * Reads the JWT cookie if present and attaches req.user (or null).
@@ -13,10 +13,10 @@ export const attachUser = asyncHandler(async (req, _res, next) => {
   if (!token) return next();
   try {
     const decoded = verifyToken(token);
-    const user = await User.findById(decoded.id);
+    const user = await findById(decoded.id);
     if (user) req.user = user;
   } catch {
-    // invalid / expired token → treat as guest
+    // invalid / expired token, or unknown user id → treat as guest
   }
   return next();
 });

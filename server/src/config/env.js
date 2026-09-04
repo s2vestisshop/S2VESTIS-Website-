@@ -11,7 +11,9 @@ export const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
   port: Number(process.env.PORT) || 5050,
   clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
-  mongoUri: process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/s2vestis',
+
+  supabaseUrl: process.env.SUPABASE_URL || '',
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
 
   jwtSecret: process.env.JWT_SECRET || 'dev_insecure_secret_change_me',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',

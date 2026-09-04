@@ -1,6 +1,10 @@
 # S2VESTIS — Backend API
 
-Node.js + Express 5 + MongoDB (Mongoose) REST API for the S2VESTIS apparel store.
+Node.js + Express 5 + **Supabase (PostgreSQL)** REST API for the S2VESTIS apparel store.
+The Express layer holds all business logic; Postgres holds a set of `SECURITY
+DEFINER` RPC functions (search, cart, orders, admin CRUD) that the API calls
+with the service-role key. See [`../supabase/README.md`](../supabase/README.md)
+for the schema itself.
 
 > **Out of scope (this build):** real payment capture / a payment gateway, and
 > live shipment tracking. `POST /orders` records a **demo order** (no payment,
@@ -9,13 +13,13 @@ Node.js + Express 5 + MongoDB (Mongoose) REST API for the S2VESTIS apparel store
 ## Requirements
 
 - Node.js ≥ 18 (tested on 22)
-- MongoDB running locally (`mongodb://127.0.0.1:27017`) or a MongoDB Atlas URI
+- A Supabase project with the schema in [`../supabase/migrations/`](../supabase/migrations) applied — see that folder's README for setup. There is no local/offline mode; the API always talks to a real Postgres over the network.
 
 ## Setup
 
 ```bash
 cd server
-cp .env.example .env        # then edit values
+cp .env.example .env        # fill in SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY
 npm install
 npm run seed                # wipes + loads ~33 demo products, 8 categories, 2 users
 npm run dev                 # http://localhost:5050
@@ -27,7 +31,8 @@ npm run dev                 # http://localhost:5050
 | --- | --- | --- |
 | `PORT` | `5050` | API port |
 | `CLIENT_URL` | `http://localhost:5173` | CORS origin (Vite dev server) |
-| `MONGO_URI` | `mongodb://127.0.0.1:27017/s2vestis` | connection string |
+| `SUPABASE_URL` | — | Project Settings → API in the Supabase dashboard |
+| `SUPABASE_SERVICE_ROLE_KEY` | — | same page — **server-side only**, bypasses RLS, never expose to the client |
 | `JWT_SECRET` | _(required in prod)_ | long random string |
 | `JWT_EXPIRES_IN` | `7d` | token + cookie lifetime |
 | `COOKIE_SECURE` | `false` | set `true` behind HTTPS |
@@ -39,12 +44,10 @@ npm run dev                 # http://localhost:5050
 
 | Command | What it does |
 | --- | --- |
-| `npm run dev` | start with nodemon (needs a real MongoDB) |
-| `npm run dev:mem` | start against a throwaway **in-memory MongoDB**, auto-seeded — no local mongod required |
+| `npm run dev` | start with nodemon |
 | `npm start` | start once |
-| `npm run seed` | wipe + reseed demo data |
-| `npm run seed:destroy` | wipe all collections |
-| `npm run smoke` | spin up an **in-memory MongoDB**, seed it, and run ~55 end-to-end API assertions (no external services needed) |
+| `npm run seed` | calls `public.reseed_demo_data()` over the network — wipes and reloads all demo data on the configured Supabase project |
+| `npm run smoke` | reseeds the configured Supabase project, then runs ~56 end-to-end API assertions against the real running app. ⚠️ Never point this at a project holding real data — it wipes everything first. |
 
 ## Auth model
 
@@ -158,17 +161,23 @@ server-side and used for price filtering/sorting.
 
 ```
 server/
-├── seed.js                     # CLI wrapper around src/seed/seedData.js
-├── scripts/smoke.js            # in-memory end-to-end test
+├── seed.js                     # CLI wrapper → calls public.reseed_demo_data() over the network
+├── scripts/smoke.js            # end-to-end HTTP test against the live app + Supabase
 └── src/
     ├── app.js                  # express app (middleware, routes, error handling)
-    ├── server.js               # connect DB + listen
-    ├── config/                 # env, db, cloudinary
-    ├── models/                 # User, Category, Product, Cart, Wishlist, Order
+    ├── server.js               # verify Supabase reachable + listen
+    ├── config/                 # env, supabase client, cloudinary
+    ├── db/                     # data-access layer — one module per resource, wraps
+    │                           #   supabase-js calls / RPCs, shapes rows into the
+    │                           #   camelCase JSON the frontend expects
     ├── middleware/             # auth, guest, validate, rateLimiter, upload, error
-    ├── validators/            # express-validator chains
-    ├── controllers/
-    ├── services/cartService.js # cart resolve / merge / serialize
-    ├── routes/
-    └── seed/seedData.js
+    ├── validators/              # express-validator chains
+    ├── controllers/             # thin — call src/db/*, no query logic here
+    └── routes/
 ```
+
+Almost all query/business logic (filtering, search ranking, cart merge, atomic
+order placement + stock decrement, product/variant tree writes) lives in
+Postgres `SECURITY DEFINER` functions in `../supabase/migrations/`, not in
+`src/db/`. That keeps the Express layer thin and the data layer transactionally
+correct regardless of which client calls it.

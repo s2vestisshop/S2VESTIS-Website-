@@ -102,7 +102,10 @@ declare
   d numeric(12,2) := 0;
   used_by_user integer := 0;
 begin
-  select * into c from public.coupons where code = lower(p_code);
+  -- `code` is citext (case-insensitive by design) — compare directly.
+  -- Calling lower() here would coerce the comparison to plain `text`,
+  -- silently making it case-sensitive again.
+  select * into c from public.coupons where code = p_code;
 
   if not found or not c.is_active then
     return query select false, 0::numeric, 'This code is not valid.'; return;
@@ -194,7 +197,9 @@ create or replace function public.place_order(
 returns uuid
 language plpgsql
 security definer
-set search_path = public
+-- `extensions` is where Supabase installs pgcrypto (gen_random_bytes) by
+-- default, rather than `public`; include it so the call below resolves.
+set search_path = public, extensions
 as $$
 declare
   v_order_id   uuid;
@@ -241,7 +246,7 @@ begin
       raise exception 'INVALID_COUPON:%', v_chk.message using errcode = 'P0001';
     end if;
     v_discount := v_chk.discount;
-    select * into v_coupon from public.coupons where code = lower(p_coupon_code);
+    select * into v_coupon from public.coupons where code = p_coupon_code;
   end if;
 
   -- shipping: free over 1999 (after discount), else flat 99
@@ -254,7 +259,7 @@ begin
      total, item_count, coupon_code, address, placed_at)
   values
     (p_user_id, v_order_num, 'demo-placed', v_subtotal, v_discount, v_shipping,
-     v_total, v_count, nullif(lower(coalesce(p_coupon_code, '')), ''), p_address, now())
+     v_total, v_count, nullif(p_coupon_code, ''), p_address, now())
   returning id into v_order_id;
 
   -- snapshot lines + decrement stock
