@@ -11,8 +11,15 @@ export function HeroCarousel() {
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [paused, setPaused] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [held, setHeld] = useState(false);
   const timer = useRef<number | undefined>(undefined);
+  // pointer position at the start of a press — used to detect a hand swipe
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
+
+  // autoplay pauses on hover, keyboard focus, or while a finger is held down
+  const paused = hovering || focused || held;
 
   const go = useCallback(
     (next: number, dir: number) => {
@@ -24,6 +31,29 @@ export function HeroCarousel() {
 
   const next = useCallback(() => go(index + 1, 1), [go, index]);
   const prev = useCallback(() => go(index - 1, -1), [go, index]);
+
+  // press-and-hold to stop autoplay; drag horizontally to change slide
+  const onPointerDown = (e: React.PointerEvent) => {
+    swipeStart.current = { x: e.clientX, y: e.clientY };
+    setHeld(true);
+  };
+  const onPointerEnd = (e: React.PointerEvent) => {
+    const start = swipeStart.current;
+    swipeStart.current = null;
+    setHeld(false);
+    if (!start) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    // horizontal, deliberate move → advance; small taps fall through to clicks
+    if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      if (dx < 0) next();
+      else prev();
+    }
+  };
+  const onPointerCancel = () => {
+    swipeStart.current = null;
+    setHeld(false);
+  };
 
   // autoplay
   useEffect(() => {
@@ -45,12 +75,16 @@ export function HeroCarousel() {
     <section
       aria-roledescription="carousel"
       aria-label="Featured"
-      className="relative isolate overflow-hidden bg-ink-900"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
+      className="relative isolate touch-pan-y select-none overflow-hidden bg-ink-900"
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onFocusCapture={() => setFocused(true)}
+      onBlurCapture={() => setFocused(false)}
       onKeyDown={onKeyDown}
+      onPointerDown={onPointerDown}
+      onPointerUp={onPointerEnd}
+      onPointerCancel={onPointerCancel}
+      onPointerLeave={onPointerCancel}
       tabIndex={0}
     >
       <div className="relative h-[42vh] min-h-[300px] w-full sm:h-[80vh] lg:h-[86vh]">
