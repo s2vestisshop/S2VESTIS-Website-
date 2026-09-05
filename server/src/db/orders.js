@@ -1,7 +1,12 @@
 import { supabase, assertNoError } from '../config/supabase.js';
 
-const ORDER_SELECT =
-  'id, order_number, status, item_count, total, address, payment_method, paid_at, payment_review_required, created_at, order_items(product_id, name, slug, image_url, color, size, quantity, unit_price)';
+const ORDER_SELECT = `
+  id, order_number, status, item_count, total, address, payment_method, paid_at,
+  payment_review_required, awb_code, courier_name, tracking_url,
+  shipped_at, out_for_delivery_at, delivered_at, estimated_delivery_date, created_at,
+  order_items(product_id, name, slug, image_url, color, size, quantity, unit_price),
+  shipment_events(status, description, occurred_at)
+`;
 
 function mapOrder(row) {
   if (!row) return null;
@@ -15,6 +20,13 @@ function mapOrder(row) {
     paymentMethod: row.payment_method ?? null,
     paidAt: row.paid_at ?? null,
     paymentReviewRequired: row.payment_review_required ?? false,
+    awbCode: row.awb_code ?? null,
+    courierName: row.courier_name ?? null,
+    trackingUrl: row.tracking_url ?? null,
+    shippedAt: row.shipped_at ?? null,
+    outForDeliveryAt: row.out_for_delivery_at ?? null,
+    deliveredAt: row.delivered_at ?? null,
+    estimatedDeliveryDate: row.estimated_delivery_date ?? null,
     createdAt: row.created_at,
     items: (row.order_items ?? []).map((it) => ({
       product: it.product_id,
@@ -26,6 +38,10 @@ function mapOrder(row) {
       quantity: it.quantity,
       price: Number(it.unit_price),
     })),
+    events: (row.shipment_events ?? [])
+      .slice()
+      .sort((a, b) => new Date(a.occurred_at) - new Date(b.occurred_at))
+      .map((ev) => ({ status: ev.status, description: ev.description, occurredAt: ev.occurred_at })),
   };
 }
 

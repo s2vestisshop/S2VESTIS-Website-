@@ -95,7 +95,14 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col-reverse items-center justify-between gap-6 border-t border-ink-100 pt-8 sm:flex-row">
           <p className="text-xs text-ink-400">
-            © {new Date().getFullYear()} S2VESTIS. All rights reserved.
+            © {new Date().getFullYear()} S2VESTIS. All rights reserved. ·{' '}
+            <Link to="/privacy" className="hover:text-ink-700">
+              Privacy Policy
+            </Link>{' '}
+            ·{' '}
+            <Link to="/terms" className="hover:text-ink-700">
+              Terms &amp; Conditions
+            </Link>
           </p>
           <div className="flex items-center gap-4 text-ink-500">
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-ink-900">

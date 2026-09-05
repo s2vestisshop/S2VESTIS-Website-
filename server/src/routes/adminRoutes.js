@@ -11,6 +11,10 @@ import {
   adminDeleteCategory,
   adminUpload,
   adminStats,
+  adminListOrders,
+  adminGetOrderDetail,
+  adminUpdateOrderStatusHandler,
+  adminRetryShipment,
 } from '../controllers/adminController.js';
 import { protect, admin } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
@@ -24,6 +28,7 @@ import {
   createCategoryValidator,
   updateCategoryValidator,
 } from '../validators/categoryValidators.js';
+import { adminUpdateOrderStatusValidator } from '../validators/orderValidators.js';
 
 const router = Router();
 
@@ -38,6 +43,18 @@ router.get('/products/:id', idParamValidator, validate, adminGetProduct);
 router.post('/products', createProductValidator, validate, adminCreateProduct);
 router.put('/products/:id', updateProductValidator, validate, adminUpdateProduct);
 router.delete('/products/:id', idParamValidator, validate, adminDeleteProduct);
+
+// Orders
+router.get('/orders', adminListOrders);
+router.get('/orders/:id', idParamValidator, validate, adminGetOrderDetail);
+router.put(
+  '/orders/:id/status',
+  idParamValidator,
+  adminUpdateOrderStatusValidator,
+  validate,
+  adminUpdateOrderStatusHandler
+);
+router.post('/orders/:id/create-shipment', idParamValidator, validate, adminRetryShipment);
 
 // Categories
 router.get('/categories', adminListCategories);

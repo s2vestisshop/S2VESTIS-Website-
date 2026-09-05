@@ -12,3 +12,12 @@ export const loginValidator = [
   body('email').trim().isEmail().withMessage('A valid email is required').normalizeEmail(),
   body('password').notEmpty().withMessage('Password is required'),
 ];
+
+export const forgotPasswordValidator = [
+  body('email').trim().isEmail().withMessage('A valid email is required').normalizeEmail(),
+];
+
+export const resetPasswordValidator = [
+  body('token').trim().notEmpty().withMessage('Reset token is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+];

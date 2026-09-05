@@ -6,22 +6,11 @@ import { toErrorMessage } from '@/api/client';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatPrice, pluralize } from '@/lib/format';
 import { onImageError } from '@/lib/product';
+import { orderStatusInfo } from '@/lib/orderStatus';
 import type { Order } from '@/types';
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-
-// TODO(Phase 11): extract into a shared lib/orderStatus.ts once the admin
-// orders view needs the same mapping (+ shipped/out_for_delivery/delivered
-// and per-status badge colors).
-const STATUS_LABEL: Record<string, string> = {
-  'demo-placed': 'Placed',
-  'pending-payment': 'Pending payment',
-  paid: 'Paid',
-  fulfilled: 'Fulfilled',
-  cancelled: 'Cancelled',
-  refunded: 'Refunded',
-};
 
 export function OrdersPage() {
   const [orders, setOrders] = useState<Order[] | null>(null);
@@ -95,8 +84,10 @@ export function OrdersPage() {
                       {formatPrice(o.total)}
                     </p>
                   </div>
-                  <span className="rounded-pill bg-sage-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sage-700">
-                    {STATUS_LABEL[o.status] ?? o.status}
+                  <span
+                    className={`rounded-pill px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${orderStatusInfo(o.status).badgeClass}`}
+                  >
+                    {orderStatusInfo(o.status).label}
                   </span>
                   <ChevronRight className="h-4 w-4 text-ink-400" />
                 </Link>

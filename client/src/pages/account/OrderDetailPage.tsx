@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
+import { Check, CheckCircle2 } from 'lucide-react';
 import { ordersApi } from '@/api';
 import { toErrorMessage } from '@/api/client';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatPrice, pluralize } from '@/lib/format';
 import { onImageError } from '@/lib/product';
+import { orderStatusInfo, DELIVERY_STEPS } from '@/lib/orderStatus';
+import { cn } from '@/lib/cn';
 import { NotFoundPage } from '../NotFoundPage';
 import type { Order } from '@/types';
 
@@ -16,6 +18,75 @@ const fmtDate = (iso: string) =>
     month: 'long',
     year: 'numeric',
   });
+
+const fmtShortDate = (iso: string) =>
+  new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+
+function DeliveryStatus({ order }: { order: Order }) {
+  if (order.status === 'cancelled' || order.status === 'refunded') {
+    const info = orderStatusInfo(order.status);
+    return (
+      <div className={cn('mt-6 rounded-card p-4 text-sm font-medium', info.badgeClass)}>
+        This order was {info.label.toLowerCase()}.
+      </div>
+    );
+  }
+
+  const currentIndex = Math.max(
+    0,
+    DELIVERY_STEPS.findIndex((s) => s.key === order.status)
+  );
+
+  return (
+    <div className="mt-6 rounded-card border border-ink-100 bg-surface p-5">
+      <p className="text-xs font-semibold uppercase tracking-widest text-ink-400">
+        Delivery status
+      </p>
+      <ol className="mt-4 space-y-4">
+        {DELIVERY_STEPS.map((step, i) => {
+          const done = i <= currentIndex;
+          return (
+            <li key={step.key} className="flex items-center gap-3">
+              <span
+                className={cn(
+                  'flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
+                  done ? 'bg-sage-500 text-white' : 'bg-ink-100 text-ink-400'
+                )}
+              >
+                {done ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                )}
+              </span>
+              <span className={cn('text-sm', done ? 'font-medium text-ink-900' : 'text-ink-400')}>
+                {step.label}
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+
+      {order.estimatedDeliveryDate && currentIndex < DELIVERY_STEPS.length - 1 && (
+        <p className="mt-4 text-xs text-ink-500">
+          Estimated delivery: {fmtShortDate(order.estimatedDeliveryDate)}
+        </p>
+      )}
+
+      {order.trackingUrl && (
+        <a
+          href={order.trackingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block text-sm font-semibold text-clay-600 link-underline"
+        >
+          Track with {order.courierName || 'courier'}
+          {order.awbCode ? ` (AWB ${order.awbCode})` : ''}
+        </a>
+      )}
+    </div>
+  );
+}
 
 export function OrderDetailPage() {
   const { id = '' } = useParams();
@@ -60,6 +131,8 @@ export function OrderDetailPage() {
                 </p>
               </div>
             </div>
+
+            <DeliveryStatus order={order} />
 
             {order.address && (
               <div className="mt-6 rounded-card border border-ink-100 bg-surface p-4">

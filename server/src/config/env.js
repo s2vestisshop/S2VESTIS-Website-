@@ -31,6 +31,20 @@ export const env = {
     webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || '',
   },
 
+  shiprocket: {
+    email: process.env.SHIPROCKET_EMAIL || '',
+    password: process.env.SHIPROCKET_PASSWORD || '',
+    webhookToken: process.env.SHIPROCKET_WEBHOOK_TOKEN || '',
+    pickupLocation: process.env.SHIPROCKET_PICKUP_LOCATION || '',
+    pickupPincode: process.env.SHIPROCKET_PICKUP_PINCODE || '',
+  },
+
+  email: {
+    apiKey: process.env.RESEND_API_KEY || '',
+    from: process.env.EMAIL_FROM || 'S2VESTIS <onboarding@resend.dev>',
+  },
+  adminAlertEmail: process.env.ADMIN_ALERT_EMAIL || '',
+
   seed: {
     adminName: process.env.SEED_ADMIN_NAME || 'Admin',
     adminEmail: process.env.SEED_ADMIN_EMAIL || 'admin@s2vestis.com',
@@ -45,5 +59,17 @@ export const isCloudinaryConfigured = Boolean(
 );
 
 export const isRazorpayConfigured = Boolean(env.razorpay.keyId && env.razorpay.keySecret);
+
+// Shiprocket is treated as optional/best-effort (unlike Razorpay): a store
+// should still be able to take payments before shipping is wired up, and a
+// missing/broken Shiprocket config should never take down checkout — see
+// services/shiprocket.js and the "retry shipment creation" admin action.
+export const isShiprocketConfigured = Boolean(
+  env.shiprocket.email && env.shiprocket.password && env.shiprocket.pickupLocation
+);
+
+// Also optional/best-effort: with no API key, sendEmail() logs to the
+// console instead of failing, so local dev never needs a real Resend account.
+export const isEmailConfigured = Boolean(env.email.apiKey);
 
 export const isProd = env.nodeEnv === 'production';

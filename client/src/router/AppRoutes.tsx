@@ -18,6 +18,11 @@ const WishlistPage = named(() => import('@/pages/WishlistPage'), 'WishlistPage')
 const CheckoutPage = named(() => import('@/pages/CheckoutPage'), 'CheckoutPage');
 const LoginPage = named(() => import('@/pages/LoginPage'), 'LoginPage');
 const RegisterPage = named(() => import('@/pages/RegisterPage'), 'RegisterPage');
+const ForgotPasswordPage = named(
+  () => import('@/pages/ForgotPasswordPage'),
+  'ForgotPasswordPage'
+);
+const ResetPasswordPage = named(() => import('@/pages/ResetPasswordPage'), 'ResetPasswordPage');
 const AccountPage = named(() => import('@/pages/AccountPage'), 'AccountPage');
 const OrdersPage = named(() => import('@/pages/account/OrdersPage'), 'OrdersPage');
 const OrderDetailPage = named(() => import('@/pages/account/OrderDetailPage'), 'OrderDetailPage');
@@ -28,6 +33,8 @@ const SustainabilityPage = named(() => import('@/pages/info/StaticPages'), 'Sust
 const StoresPage = named(() => import('@/pages/info/StaticPages'), 'StoresPage');
 const ShippingReturnsPage = named(() => import('@/pages/info/StaticPages'), 'ShippingReturnsPage');
 const TrackOrderPage = named(() => import('@/pages/info/StaticPages'), 'TrackOrderPage');
+const PrivacyPolicyPage = named(() => import('@/pages/info/StaticPages'), 'PrivacyPolicyPage');
+const TermsPage = named(() => import('@/pages/info/StaticPages'), 'TermsPage');
 const ContactPage = named(() => import('@/pages/info/ContactPage'), 'ContactPage');
 const FaqPage = named(() => import('@/pages/info/FaqPage'), 'FaqPage');
 
@@ -47,6 +54,11 @@ const AdminProductFormPage = named(
 const AdminCategoriesPage = named(
   () => import('@/pages/admin/AdminCategoriesPage'),
   'AdminCategoriesPage'
+);
+const AdminOrdersPage = named(() => import('@/pages/admin/AdminOrdersPage'), 'AdminOrdersPage');
+const AdminOrderDetailPage = named(
+  () => import('@/pages/admin/AdminOrderDetailPage'),
+  'AdminOrderDetailPage'
 );
 
 export function AppRoutes() {
@@ -68,6 +80,8 @@ export function AppRoutes() {
         />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="reset-password" element={<ResetPasswordPage />} />
 
         {/* content pages */}
         <Route path="about" element={<AboutPage />} />
@@ -78,6 +92,8 @@ export function AppRoutes() {
         <Route path="stores" element={<StoresPage />} />
         <Route path="sustainability" element={<SustainabilityPage />} />
         <Route path="track" element={<TrackOrderPage />} />
+        <Route path="privacy" element={<PrivacyPolicyPage />} />
+        <Route path="terms" element={<TermsPage />} />
 
         <Route
           path="account"
@@ -117,6 +133,8 @@ export function AppRoutes() {
           <Route path="products/new" element={<AdminProductFormPage />} />
           <Route path="products/:id/edit" element={<AdminProductFormPage />} />
           <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="orders" element={<AdminOrdersPage />} />
+          <Route path="orders/:id" element={<AdminOrderDetailPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

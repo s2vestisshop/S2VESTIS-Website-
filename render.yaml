@@ -45,6 +45,25 @@ services:
         sync: false
       - key: RAZORPAY_WEBHOOK_SECRET
         sync: false
+      # Optional — shipment creation is best-effort and degrades gracefully
+      # if these are blank (see server/.env.example).
+      - key: SHIPROCKET_EMAIL
+        sync: false
+      - key: SHIPROCKET_PASSWORD
+        sync: false
+      - key: SHIPROCKET_PICKUP_LOCATION
+        sync: false
+      - key: SHIPROCKET_PICKUP_PINCODE
+        sync: false
+      - key: SHIPROCKET_WEBHOOK_TOKEN
+        sync: false
+      # Optional — sendEmail() logs to console instead of sending if this is blank.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        value: "S2VESTIS <onboarding@resend.dev>"
+      - key: ADMIN_ALERT_EMAIL
+        sync: false
       - key: SEED_ADMIN_EMAIL
         value: admin@s2vestis.com
       - key: SEED_ADMIN_PASSWORD

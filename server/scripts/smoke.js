@@ -338,6 +338,26 @@ async function main() {
     r = await api('DELETE', `/api/admin/categories/${usedCat._id}`);
     check('delete in-use category → 400', r.status === 400);
 
+    // ---- admin orders (Phase 11) ----
+    r = await api('GET', '/api/admin/orders?limit=5');
+    check('admin orders list → paginated', r.status === 200 && Array.isArray(r.json?.data));
+    r = await api('GET', '/api/admin/orders/00000000-0000-0000-0000-000000000000');
+    check('admin get unknown order → 404', r.status === 404);
+
+    // ---- forgot/reset password (Phase 12) — same response either way, so
+    // this can't be used to check which emails have accounts. ----
+    r = await api('POST', '/api/auth/forgot-password', { email: 'admin@s2vestis.com' });
+    const realMsg = r.json?.message;
+    check('forgot-password (real account) → 200', r.status === 200);
+    r = await api('POST', '/api/auth/forgot-password', { email: 'definitely-not-registered@test.com' });
+    check(
+      'forgot-password (unknown email) → same 200 + message as a real account',
+      r.status === 200 && r.json?.message === realMsg
+    );
+
+    r = await api('POST', '/api/auth/reset-password', { token: 'not-a-real-token', password: 'newpass123' });
+    check('reset-password with a bogus token → 400', r.status === 400);
+
     r = await api('POST', '/api/auth/logout');
     check('logout → 200', r.status === 200);
     r = await api('GET', '/api/auth/me');
@@ -345,6 +365,9 @@ async function main() {
 
     r = await api('GET', '/api/orders');
     check('GET /api/orders as guest → 401', r.status === 401);
+
+    r = await api('GET', '/api/admin/orders');
+    check('admin orders list as guest → 401', r.status === 401);
   } finally {
     server.close();
   }

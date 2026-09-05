@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { ApiItemResponse, ApiListResponse, Category, Pagination, Product } from '@/types';
+import type { AdminOrder, ApiItemResponse, ApiListResponse, Category, Pagination, Product } from '@/types';
 
 export interface AdminStats {
   totalProducts: number;
@@ -17,6 +17,13 @@ export interface AdminProductQuery {
   search?: string;
   category?: string;
   status?: 'active' | 'inactive';
+  page?: number;
+  limit?: number;
+}
+
+export interface AdminOrderQuery {
+  search?: string;
+  status?: string;
   page?: number;
   limit?: number;
 }
@@ -70,6 +77,31 @@ export const adminApi = {
 
   async deleteCategory(id: string): Promise<void> {
     await api.delete(`/admin/categories/${id}`);
+  },
+
+  async listOrders(
+    query: AdminOrderQuery = {}
+  ): Promise<{ orders: AdminOrder[]; pagination: Pagination }> {
+    const { data } = await api.get<ApiListResponse<AdminOrder>>('/admin/orders', { params: query });
+    return { orders: data.data, pagination: data.pagination };
+  },
+
+  async getOrder(id: string): Promise<AdminOrder> {
+    const { data } = await api.get<ApiItemResponse<AdminOrder>>(`/admin/orders/${id}`);
+    return data.data;
+  },
+
+  async updateOrderStatus(id: string, status: string, note?: string): Promise<AdminOrder> {
+    const { data } = await api.put<ApiItemResponse<AdminOrder>>(`/admin/orders/${id}/status`, {
+      status,
+      note,
+    });
+    return data.data;
+  },
+
+  async retryShipment(id: string): Promise<AdminOrder> {
+    const { data } = await api.post<ApiItemResponse<AdminOrder>>(`/admin/orders/${id}/create-shipment`);
+    return data.data;
   },
 
   async upload(files: File[]): Promise<string[]> {

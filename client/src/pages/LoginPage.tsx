@@ -87,18 +87,23 @@ export function LoginPage() {
           }}
           error={errors.email}
         />
-        <FormField
-          label="Password"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setErrors((x) => ({ ...x, password: undefined }));
-            setBanner(null);
-          }}
-          error={errors.password}
-        />
+        <div>
+          <FormField
+            label="Password"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setErrors((x) => ({ ...x, password: undefined }));
+              setBanner(null);
+            }}
+            error={errors.password}
+          />
+          <div className="mt-1.5 text-right">
+            <AuthLink to="/forgot-password">Forgot password?</AuthLink>
+          </div>
+        </div>
         <button type="submit" disabled={submitting} className="btn-primary w-full">
           {submitting ? 'Signing in…' : 'Sign in'}
         </button>

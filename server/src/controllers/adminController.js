@@ -3,7 +3,10 @@ import ApiError from '../utils/ApiError.js';
 import * as productsDb from '../db/products.js';
 import * as categoriesDb from '../db/categories.js';
 import * as adminDb from '../db/admin.js';
+import * as shippingDb from '../db/shipping.js';
+import { findById } from '../db/users.js';
 import { persistFile, uploadStorageMode } from '../middleware/upload.js';
+import { createShipmentOrder } from '../services/shiprocket.js';
 
 /* --------------------------------- Products -------------------------------- */
 
@@ -103,6 +106,61 @@ export const adminUpload = asyncHandler(async (req, res) => {
   if (!files.length) throw ApiError.badRequest('No image files received');
   const urls = await Promise.all(files.map((f) => persistFile(f, req)));
   res.status(201).json({ success: true, storage: uploadStorageMode, urls });
+});
+
+/* ----------------------------------- Orders --------------------------------- */
+
+// GET /api/admin/orders  (search by order number / customer name+email, status filter, paginated)
+export const adminListOrders = asyncHandler(async (req, res) => {
+  const { search, status, page = 1, limit = 20 } = req.query;
+  const { items, pagination } = await adminDb.adminListOrders({ search, status, page, limit });
+  res.json({ success: true, data: items, pagination });
+});
+
+// GET /api/admin/orders/:id
+export const adminGetOrderDetail = asyncHandler(async (req, res) => {
+  const order = await adminDb.adminGetOrder(req.params.id);
+  if (!order) throw ApiError.notFound('Order not found');
+  res.json({ success: true, data: order });
+});
+
+// PUT /api/admin/orders/:id/status — manual override (cancel/refund/resolve a review flag)
+export const adminUpdateOrderStatusHandler = asyncHandler(async (req, res) => {
+  const { status, note } = req.body;
+  let order;
+  try {
+    order = await adminDb.adminUpdateOrderStatus(req.params.id, status, note);
+  } catch (err) {
+    if (err.message?.startsWith('ORDER_NOT_FOUND')) throw ApiError.notFound('Order not found');
+    throw err;
+  }
+  res.json({ success: true, data: order });
+});
+
+// POST /api/admin/orders/:id/create-shipment — manual retry for when
+// automatic Shiprocket creation (right after payment) failed or Shiprocket
+// wasn't configured yet at the time.
+export const adminRetryShipment = asyncHandler(async (req, res) => {
+  const order = await adminDb.adminGetOrder(req.params.id);
+  if (!order) throw ApiError.notFound('Order not found');
+  if (order.shiprocketOrderId) {
+    throw ApiError.badRequest('A Shiprocket shipment already exists for this order');
+  }
+
+  const user = await findById(order.customer.id);
+  const shipment = await createShipmentOrder({
+    orderNumber: order.orderNumber,
+    createdAt: order.createdAt,
+    address: order.address,
+    items: order.items,
+    itemCount: order.itemCount,
+    total: order.total,
+    customerEmail: user?.email,
+  });
+  await shippingDb.recordShipmentCreated(order.id, shipment);
+
+  const updated = await adminDb.adminGetOrder(order.id);
+  res.json({ success: true, data: updated });
 });
 
 /* -------------------------------- Dashboard ------------------------------- */

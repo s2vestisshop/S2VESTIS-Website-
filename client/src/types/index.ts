@@ -110,7 +110,16 @@ export type OrderStatus =
   | 'paid'
   | 'fulfilled'
   | 'cancelled'
-  | 'refunded';
+  | 'refunded'
+  | 'shipped'
+  | 'out_for_delivery'
+  | 'delivered';
+
+export interface ShipmentEvent {
+  status: string;
+  description: string | null;
+  occurredAt: string;
+}
 
 export interface Order {
   _id: string;
@@ -123,7 +132,28 @@ export interface Order {
   paymentMethod: string | null;
   paidAt: string | null;
   paymentReviewRequired: boolean;
+  awbCode: string | null;
+  courierName: string | null;
+  trackingUrl: string | null;
+  shippedAt: string | null;
+  outForDeliveryAt: string | null;
+  deliveredAt: string | null;
+  estimatedDeliveryDate: string | null;
+  events: ShipmentEvent[];
   createdAt: string;
+}
+
+// ---- admin order management ----
+export interface AdminOrder extends Order {
+  subtotal: number;
+  discountTotal: number;
+  shippingTotal: number;
+  paymentReviewNote: string | null;
+  razorpayOrderId: string | null;
+  razorpayPaymentId: string | null;
+  shiprocketOrderId: string | null;
+  shiprocketShipmentId: string | null;
+  customer: { id: string; name: string; email: string };
 }
 
 // ---- payments (Razorpay) ----

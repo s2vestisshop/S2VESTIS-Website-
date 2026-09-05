@@ -4,12 +4,29 @@ import { env } from '../config/env.js';
 import { resolveCartId } from '../db/cart.js';
 import * as paymentsDb from '../db/payments.js';
 import * as ordersDb from '../db/orders.js';
+import * as shippingDb from '../db/shipping.js';
+import * as emailDb from '../db/email.js';
+import { findById } from '../db/users.js';
 import {
   createRazorpayOrder,
   verifyPaymentSignature,
   verifyWebhookSignature,
   fetchPaymentMethod,
 } from '../services/razorpay.js';
+import { createShipmentOrder } from '../services/shiprocket.js';
+import { sendEmail } from '../services/email.js';
+import { orderConfirmationEmail, adminPaymentReviewAlert } from '../services/emailTemplates.js';
+
+async function sendAdminAlertBestEffort(orderNumber, reason) {
+  if (!env.adminAlertEmail) return;
+  try {
+    const { subject, html } = adminPaymentReviewAlert({ orderNumber, reason });
+    await sendEmail({ to: env.adminAlertEmail, subject, html });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`Admin alert email failed for ${orderNumber}:`, err.message);
+  }
+}
 
 /** Shared by both quoteCart and placeOrder — both raise the same P0001-prefixed
  * exceptions (EMPTY_CART / INSUFFICIENT_STOCK:name:size / INVALID_COUPON:msg). */
@@ -34,6 +51,54 @@ async function fetchPaymentMethodSafely(paymentId) {
   }
 }
 
+/**
+ * Best-effort Shiprocket shipment creation, called right after an order is
+ * confirmed paid. Never throws — a Shiprocket outage, missing config, or bad
+ * credentials must never undo an already-successful payment/order. If this
+ * fails, the order just sits with no shiprocket_order_id until the admin
+ * uses the "retry shipment creation" action once the underlying issue is fixed.
+ */
+async function createShipmentBestEffort(order, userId) {
+  try {
+    const user = await findById(userId);
+    const shipment = await createShipmentOrder({
+      orderNumber: order.orderNumber,
+      createdAt: order.createdAt,
+      address: order.address,
+      items: order.items,
+      itemCount: order.itemCount,
+      total: order.total,
+      customerEmail: user?.email,
+    });
+    await shippingDb.recordShipmentCreated(order._id, shipment);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`Shiprocket shipment creation failed for order ${order.orderNumber}:`, err.message);
+  }
+}
+
+/** Sends the order-confirmation email and updates the email_outbox row
+ * place_order() already inserted for it. Never throws — an email provider
+ * hiccup must never undo an already-successful payment. */
+async function sendConfirmationEmailBestEffort(order, userId) {
+  const outboxId = await emailDb.findQueuedOutboxRow(order._id, 'order_confirmation').catch(() => null);
+  try {
+    const user = await findById(userId);
+    if (!user?.email) return;
+    const { subject, html } = orderConfirmationEmail({
+      orderNumber: order.orderNumber,
+      total: order.total,
+      items: order.items.map((it) => ({ ...it, unit_price: it.price })),
+    });
+    await sendEmail({ to: user.email, subject, html });
+    if (outboxId) await emailDb.markOutboxSent(outboxId);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`Order confirmation email failed for ${order.orderNumber}:`, err.message);
+    if (outboxId) await emailDb.markOutboxFailed(outboxId, err.message).catch(() => {});
+  }
+}
+
 async function runPlaceOrderForAttempt(attempt, method) {
   try {
     const order = await ordersDb.placeOrder(attempt.userId, attempt.cartId, {
@@ -45,15 +110,21 @@ async function runPlaceOrderForAttempt(attempt, method) {
     });
     await paymentsDb.linkOrderToAttempt(attempt.id, order._id);
     if (Math.abs(order.total - attempt.amount) > 0.01) {
-      await ordersDb.flagPaymentReview(
-        order._id,
-        `Razorpay captured ₹${attempt.amount}, order computed ₹${order.total}`
-      );
+      const reason = `Razorpay captured ₹${attempt.amount}, order computed ₹${order.total}`;
+      await ordersDb.flagPaymentReview(order._id, reason);
+      await sendAdminAlertBestEffort(order.orderNumber, reason);
     }
+    await createShipmentBestEffort(order, attempt.userId);
+    await sendConfirmationEmailBestEffort(order, attempt.userId);
     return order;
   } catch (err) {
     const translated = translateCartRpcError(err);
-    await paymentsDb.markPaymentAttemptFailed(attempt.id, translated ? translated.message : err.message);
+    const reason = translated ? translated.message : err.message;
+    await paymentsDb.markPaymentAttemptFailed(attempt.id, reason);
+    await sendAdminAlertBestEffort(
+      attempt.razorpayOrderId,
+      `Payment captured but order could not be placed: ${reason}`
+    );
     // Payment is already captured by this point — the raw cart error ("cart
     // is empty") would be confusing once money has already moved.
     throw ApiError.badRequest(
@@ -95,10 +166,17 @@ export const createCheckout = asyncHandler(async (req, res) => {
     throw err;
   }
 
-  const rzpOrder = await createRazorpayOrder({
-    amountRupees: quote.total,
-    receipt: `s2v_${Date.now()}`,
-  });
+  let rzpOrder;
+  try {
+    rzpOrder = await createRazorpayOrder({ amountRupees: quote.total, receipt: `s2v_${Date.now()}` });
+  } catch (err) {
+    // Razorpay's SDK throws plain {statusCode, error} objects on API
+    // rejections (bad/expired keys, their API being down) rather than a
+    // proper Error with a useful .message — never surface that raw shape.
+    // eslint-disable-next-line no-console
+    console.error('Razorpay order creation failed:', err?.error || err);
+    throw new Error('Could not start payment — please try again in a moment.');
+  }
 
   const attempt = await paymentsDb.createPaymentAttempt({
     userId: req.user._id,

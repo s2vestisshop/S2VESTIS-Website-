@@ -50,4 +50,10 @@ export async function comparePassword(candidate, hash) {
   return bcrypt.compare(candidate, hash);
 }
 
+export async function updatePassword(userId, newPassword) {
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  const { error } = await supabase.from('users').update({ password_hash: passwordHash }).eq('id', userId);
+  assertNoError(error, 'updatePassword');
+}
+
 export { toSafeUser };

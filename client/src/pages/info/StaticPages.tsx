@@ -124,14 +124,122 @@ export function TrackOrderPage() {
   return (
     <ContentLayout title="Track your order">
       <p>
-        Live shipment tracking isn't available in this build. Your placed orders and their contents
-        are on your account.
+        Once your order ships, its tracking link, courier and delivery status all appear on the
+        order's page in your account.
       </p>
       <p>
         <Link to="/account/orders">View your orders →</Link>
       </p>
+    </ContentLayout>
+  );
+}
+
+const LAST_UPDATED = 'September 2026';
+
+export function PrivacyPolicyPage() {
+  return (
+    <ContentLayout title="Privacy Policy" intro={`Last updated: ${LAST_UPDATED}`} wide>
+      <p>
+        This policy explains what personal data S2VESTIS collects when you use this site, why, and
+        who we share it with.
+      </p>
+      <h2>Information we collect</h2>
+      <ul>
+        <li>Account details you provide: name, email, password (stored hashed, never in plain text).</li>
+        <li>Order details: items purchased, delivery address, phone number, order history.</li>
+        <li>Payment information: we never see or store your card, UPI, or bank details — payments are processed entirely by Razorpay, our payment processor.</li>
+        <li>Basic usage data (pages viewed, device/browser type) to keep the site working and secure.</li>
+      </ul>
+      <h2>How we use it</h2>
+      <ul>
+        <li>To create your account, process orders, and arrange delivery.</li>
+        <li>To send order confirmations, shipping updates, and — only if you ask — password reset emails.</li>
+        <li>To respond to support requests you send us.</li>
+      </ul>
+      <h2>Who we share it with</h2>
+      <p>We share only what's needed to fulfil your order, with:</p>
+      <ul>
+        <li>
+          <strong>Razorpay</strong> — to process payment. Razorpay's own privacy policy governs how
+          they handle your payment details.
+        </li>
+        <li>
+          <strong>Our courier partner (via Shiprocket)</strong> — your name, phone number, and
+          delivery address, solely to deliver your order.
+        </li>
+      </ul>
+      <p>We do not sell your personal information to anyone.</p>
+      <h2>Cookies</h2>
+      <p>
+        We use a small number of essential cookies to keep you signed in and to remember your cart.
+        We don't use third-party advertising cookies.
+      </p>
+      <h2>Your rights</h2>
+      <p>
+        You can review or update your account details at any time from your account page, or
+        contact us to request deletion of your data, subject to what we're required to keep for
+        legal, accounting, or fraud-prevention reasons (such as order records).
+      </p>
+      <h2>Grievance officer</h2>
+      <p>
+        For any privacy concerns or complaints, contact us at{' '}
+        <a href="mailto:help@s2vestis.com">help@s2vestis.com</a>. We aim to acknowledge complaints
+        within 48 hours.
+      </p>
       <p className="text-xs text-ink-400">
-        Real payment and delivery tracking are planned for a future release.
+        This policy is a plain-language starting point and hasn't been reviewed by a lawyer — have
+        it checked before relying on it for a live store handling real customer data.
+      </p>
+    </ContentLayout>
+  );
+}
+
+export function TermsPage() {
+  return (
+    <ContentLayout title="Terms &amp; Conditions" intro={`Last updated: ${LAST_UPDATED}`} wide>
+      <p>
+        These terms govern your use of the S2VESTIS website and any order you place through it. By
+        placing an order, you agree to them.
+      </p>
+      <h2>Orders &amp; pricing</h2>
+      <ul>
+        <li>All prices are listed in Indian Rupees (₹) and include applicable taxes unless stated otherwise.</li>
+        <li>We reserve the right to refuse or cancel an order — for example if an item is out of stock or its price was listed incorrectly. If we cancel a paid order, you'll receive a full refund.</li>
+        <li>An order is confirmed only once payment is successfully captured by Razorpay.</li>
+      </ul>
+      <h2>Payment</h2>
+      <p>
+        Payments are processed securely by Razorpay. We do not store your card, UPI, or bank
+        details on our servers.
+      </p>
+      <h2>Shipping, delivery &amp; returns</h2>
+      <p>
+        See our <Link to="/shipping">Shipping &amp; Returns</Link> page for delivery timelines and
+        our return policy.
+      </p>
+      <h2>Account</h2>
+      <p>
+        You're responsible for keeping your account password confidential and for all activity
+        under your account.
+      </p>
+      <h2>Limitation of liability</h2>
+      <p>
+        To the extent permitted by law, S2VESTIS is not liable for indirect or consequential
+        losses arising from your use of this site or your order, beyond the value of that order.
+      </p>
+      <h2>Governing law</h2>
+      <p>
+        These terms are governed by the laws of India, and any dispute is subject to the exclusive
+        jurisdiction of the courts of Mumbai, Maharashtra.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        Questions about these terms? Email{' '}
+        <a href="mailto:help@s2vestis.com">help@s2vestis.com</a>.
+      </p>
+      <p className="text-xs text-ink-400">
+        These terms are a plain-language starting point and haven't been reviewed by a lawyer —
+        have them checked before relying on them for a live store handling real payments.
       </p>
     </ContentLayout>
   );
