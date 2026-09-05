@@ -1,6 +1,7 @@
 import type { Product, Variant } from '@/types';
 
-const PLACEHOLDER = 'https://placehold.co/900x1200/E7E4DE/8B8375?text=S2VESTIS';
+// Local branded fallback (client/public/placeholder.jpg) — no third-party dependency.
+const PLACEHOLDER = '/placeholder.jpg';
 
 export function primaryVariant(product: Product): Variant | undefined {
   return product.variants?.[0];

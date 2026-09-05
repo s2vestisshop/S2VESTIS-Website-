@@ -6,8 +6,10 @@ import { toErrorMessage } from '@/api/client';
 import { AuthCard, AuthLink } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
 import { minLen } from '@/lib/validate';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function ResetPasswordPage() {
+  usePageTitle('Set a new password');
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
 

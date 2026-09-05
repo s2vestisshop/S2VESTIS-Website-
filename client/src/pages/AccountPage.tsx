@@ -2,8 +2,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, LayoutDashboard, LogOut, Package, ShoppingBag } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { logout } from '@/features/auth/authSlice';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function AccountPage() {
+  usePageTitle('Account');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector((s) => s.auth.user);

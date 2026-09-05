@@ -32,7 +32,7 @@ export function CategoryShowcase() {
               className="group relative block aspect-[4/5] overflow-hidden rounded-card bg-ink-100"
             >
               <img
-                src={imageBySlug.get(c.slug) || `https://picsum.photos/seed/s2v-cat-${c.slug}/600/750`}
+                src={imageBySlug.get(c.slug) || PLACEHOLDER_IMAGE}
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).src = PLACEHOLDER_IMAGE;
                 }}

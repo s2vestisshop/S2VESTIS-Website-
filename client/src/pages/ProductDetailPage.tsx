@@ -17,6 +17,7 @@ import { DetailsAccordion } from '@/components/product/DetailsAccordion';
 import { SizeGuideModal } from '@/components/product/SizeGuide';
 import { ProductCarousel } from '@/components/product/ProductCarousel';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { NotFoundPage } from './NotFoundPage';
 import type { Category, Product } from '@/types';
 
@@ -37,6 +38,8 @@ export function ProductDetailPage() {
   const [busy, setBusy] = useState(false);
   const [added, setAdded] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
+
+  usePageTitle(status === 'ready' ? product?.name : null);
 
   useEffect(() => {
     let alive = true;

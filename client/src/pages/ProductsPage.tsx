@@ -11,6 +11,8 @@ import { FilterDrawer } from '@/components/gallery/FilterDrawer';
 import { SortDropdown } from '@/components/gallery/SortDropdown';
 import { ActiveFilterChips } from '@/components/gallery/ActiveFilterChips';
 import { formatCount, pluralize } from '@/lib/format';
+import { GENDERS } from '@/lib/nav';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import type { Pagination, Product } from '@/types';
 
 const LIMIT = 12;
@@ -18,6 +20,16 @@ const LIMIT = 12;
 export function ProductsPage() {
   const { filters, apply, toggleInArray, clearAll, activeCount, toQuery } = useProductFilters();
   const { categories } = useCategories();
+
+  const pageTitle = useMemo(() => {
+    if (filters.search) return `Search: “${filters.search}”`;
+    if (filters.category)
+      return categories.find((c) => c.slug === filters.category)?.name ?? 'Shop';
+    if (filters.gender)
+      return GENDERS.find((g) => g.value === filters.gender)?.label ?? 'Shop';
+    return 'All products';
+  }, [filters.search, filters.category, filters.gender, categories]);
+  usePageTitle(pageTitle);
 
   const [items, setItems] = useState<Product[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);

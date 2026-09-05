@@ -8,6 +8,7 @@ import { formatPrice, pluralize } from '@/lib/format';
 import { onImageError } from '@/lib/product';
 import { orderStatusInfo, DELIVERY_STEPS } from '@/lib/orderStatus';
 import { cn } from '@/lib/cn';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import { NotFoundPage } from '../NotFoundPage';
 import type { Order } from '@/types';
 
@@ -92,6 +93,8 @@ export function OrderDetailPage() {
   const { id = '' } = useParams();
   const [order, setOrder] = useState<Order | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'notfound'>('loading');
+
+  usePageTitle(order ? `Order ${order.orderNumber}` : 'Order');
 
   useEffect(() => {
     ordersApi

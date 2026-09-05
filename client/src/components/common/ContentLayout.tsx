@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import { cn } from '@/lib/cn';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 /**
  * Shared shell for static content pages (About, FAQ, policies, …).
@@ -7,21 +7,19 @@ import { cn } from '@/lib/cn';
  */
 export function ContentLayout({
   title,
+  docTitle,
   intro,
   children,
   wide,
 }: {
   title: string;
+  /** Browser-tab title, when it should differ from the on-page <h1>. */
+  docTitle?: string;
   intro?: string;
   children: React.ReactNode;
   wide?: boolean;
 }) {
-  useEffect(() => {
-    document.title = `${title} — S2VESTIS`;
-    return () => {
-      document.title = 'S2VESTIS — Considered Apparel';
-    };
-  }, [title]);
+  usePageTitle(docTitle ?? title);
 
   return (
     <div className="container-page py-12 lg:py-16">

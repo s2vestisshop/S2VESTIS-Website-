@@ -8,12 +8,14 @@ import { FormField } from '@/components/auth/FormField';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { isGoogleSignInConfigured } from '@/lib/supabase';
 import { isEmail, required } from '@/lib/validate';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface LocationState {
   from?: string;
 }
 
 export function LoginPage() {
+  usePageTitle('Sign in');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();

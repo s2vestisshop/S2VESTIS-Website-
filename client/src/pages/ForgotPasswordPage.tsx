@@ -5,8 +5,10 @@ import { toErrorMessage } from '@/api/client';
 import { AuthCard, AuthLink } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
 import { isEmail } from '@/lib/validate';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function ForgotPasswordPage() {
+  usePageTitle('Reset your password');
   const [email, setEmail] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);

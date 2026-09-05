@@ -7,12 +7,14 @@ import { Skeleton } from '@/components/ui/Skeleton';
 import { formatPrice, pluralize } from '@/lib/format';
 import { onImageError } from '@/lib/product';
 import { orderStatusInfo } from '@/lib/orderStatus';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import type { Order } from '@/types';
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
 export function OrdersPage() {
+  usePageTitle('Your orders');
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 

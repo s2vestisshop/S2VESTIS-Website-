@@ -2,7 +2,14 @@
  * Home hero carousel content.
  *
  * Edit / reorder / add slides here (3–5 recommended) — the carousel layout,
- * animation, arrows and dots adapt automatically. `image` can be any URL.
+ * animation, arrows and dots adapt automatically. `image` can be any URL or a
+ * path under `client/public/`.
+ *
+ * NOTE: `/hero/hero-N.jpg` (in `client/public/hero/`) are branded PLACEHOLDER
+ * images. Replace each with real photography — 1920×1080, JPG, under ~300 KB,
+ * same filename. Keep the copy side of the frame (left for slides 1/2/4,
+ * centre for slide 3 per `align`) relatively clean and mid-to-dark so the
+ * white headline stays readable. Or set `image` to an absolute CDN URL.
  */
 export interface HeroSlide {
   image: string;
@@ -21,7 +28,7 @@ export interface HeroSlide {
 
 export const HERO_SLIDES: HeroSlide[] = [
   {
-    image: 'https://picsum.photos/seed/s2v-hero-01/1920/1080',
+    image: '/hero/hero-1.jpg',
     align: 'left',
     eyebrow: 'New Season',
     title: 'Considered essentials, made to be worn out.',
@@ -34,7 +41,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     tone: 'light',
   },
   {
-    image: 'https://picsum.photos/seed/s2v-hero-02/1920/1080',
+    image: '/hero/hero-2.jpg',
     align: 'left',
     eyebrow: 'Linen, refreshed',
     title: 'Breathable linen shirts for long, warm days.',
@@ -44,7 +51,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     tone: 'light',
   },
   {
-    image: 'https://picsum.photos/seed/s2v-hero-03/1920/1080',
+    image: '/hero/hero-3.jpg',
     align: 'center',
     eyebrow: 'The heavyweight edit',
     title: 'Hoodies & sweats with real weight to them.',
@@ -56,7 +63,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     tone: 'light',
   },
   {
-    image: 'https://picsum.photos/seed/s2v-hero-04/1920/1080',
+    image: '/hero/hero-4.jpg',
     align: 'left',
     eyebrow: 'Move in it',
     title: 'Sportswear that keeps up and dresses down.',

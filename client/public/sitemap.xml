@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static sitemap of the stable, indexable pages.
+  Product and category-detail URLs are dynamic — regenerate this file from the
+  API at build time if you want full per-product coverage (see hero/README.md
+  note in the deploy docs).
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.s2vestis.in/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.s2vestis.in/products</loc><changefreq>daily</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.s2vestis.in/products?gender=men</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?gender=women</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?gender=unisex</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=t-shirts</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=polo</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=tees</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=shirts</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=linen-shirts</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=sportswear</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=sweatshirts</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/products?category=hoodies</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.s2vestis.in/about</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.s2vestis.in/contact</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.s2vestis.in/faq</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.s2vestis.in/shipping</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.s2vestis.in/size-guide</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://www.s2vestis.in/stores</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.s2vestis.in/sustainability</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.s2vestis.in/privacy</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <url><loc>https://www.s2vestis.in/terms</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+</urlset>

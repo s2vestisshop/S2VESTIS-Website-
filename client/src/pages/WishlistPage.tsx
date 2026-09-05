@@ -6,8 +6,10 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { fetchWishlist, hydrateItems } from '@/features/wishlist/wishlistSlice';
 import { WishlistCard } from '@/components/wishlist/WishlistCard';
 import { ProductGridSkeleton } from '@/components/ui/Skeleton';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function WishlistPage() {
+  usePageTitle('Wishlist');
   const dispatch = useAppDispatch();
   const authed = useAppSelector((s) => s.auth.status === 'authenticated');
   const authInitialized = useAppSelector((s) => s.auth.initialized);

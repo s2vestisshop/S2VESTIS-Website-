@@ -11,8 +11,10 @@ import {
 import { CartLineItem } from '@/components/cart/CartLineItem';
 import { OrderSummary } from '@/components/cart/OrderSummary';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 export function CartPage() {
+  usePageTitle('Cart');
   const dispatch = useAppDispatch();
   const { items, subtotal, count, status, pendingItemIds } = useAppSelector((s) => s.cart);
   const [confirmClear, setConfirmClear] = useState(false);

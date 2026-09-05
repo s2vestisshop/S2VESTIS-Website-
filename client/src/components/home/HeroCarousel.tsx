@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { HERO_INTERVAL, HERO_SLIDES } from '@/data/heroSlides';
+import { onImageError } from '@/lib/product';
 import { cn } from '@/lib/cn';
 
 export function HeroCarousel() {
@@ -66,6 +67,7 @@ export function HeroCarousel() {
             <img
               src={slide.image}
               alt=""
+              onError={onImageError}
               className="h-full w-full object-cover"
               loading={index === 0 ? 'eager' : 'lazy'}
               fetchPriority={index === 0 ? 'high' : 'low'}

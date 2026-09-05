@@ -11,6 +11,7 @@ import { formatPrice } from '@/lib/format';
 import { productImage, onImageError } from '@/lib/product';
 import { loadScript } from '@/lib/loadScript';
 import { required, isPhone, isPincode } from '@/lib/validate';
+import { usePageTitle } from '@/hooks/usePageTitle';
 import type { Address, Order } from '@/types';
 
 const RAZORPAY_SCRIPT_SRC = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -44,6 +45,7 @@ type FieldErrors = Partial<Record<keyof AddressForm, string>>;
  * `paymentsApi.verify` is what actually creates the order.
  */
 export function CheckoutPage() {
+  usePageTitle('Checkout');
   const dispatch = useAppDispatch();
   const { items, subtotal, count } = useAppSelector((s) => s.cart);
   const user = useAppSelector((s) => s.auth.user);

@@ -8,6 +8,7 @@ import { FormField } from '@/components/auth/FormField';
 import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
 import { isGoogleSignInConfigured } from '@/lib/supabase';
 import { isEmail, minLen, required } from '@/lib/validate';
+import { usePageTitle } from '@/hooks/usePageTitle';
 
 interface LocationState {
   from?: string;
@@ -16,6 +17,7 @@ interface LocationState {
 type FieldErrors = { name?: string; email?: string; password?: string; confirm?: string };
 
 export function RegisterPage() {
+  usePageTitle('Create account');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();

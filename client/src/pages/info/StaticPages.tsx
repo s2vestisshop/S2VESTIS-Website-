@@ -5,6 +5,7 @@ export function AboutPage() {
   return (
     <ContentLayout
       title="About S2VESTIS"
+      docTitle="About"
       intro="Considered apparel — everyday essentials, made to be worn out."
     >
       <p>
