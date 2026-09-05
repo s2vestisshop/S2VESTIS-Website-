@@ -7,4 +7,5 @@ export { wishlistApi } from './wishlist';
 export { ordersApi } from './orders';
 export { paymentsApi } from './payments';
 export { contactApi } from './contact';
+export { heroApi } from './hero';
 export { adminApi } from './admin';

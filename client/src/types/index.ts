@@ -24,6 +24,22 @@ export interface Category {
   productCount?: number;
 }
 
+export interface HeroSlide {
+  /** present on records from the API; absent on the bundled fallback list */
+  _id?: string;
+  image: string;
+  align?: 'left' | 'center';
+  eyebrow?: string;
+  title: string;
+  subtitle: string;
+  ctaText: string;
+  ctaLink: string;
+  secondaryText?: string;
+  secondaryLink?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
 export interface Rating {
   avg: number;
   count: number;

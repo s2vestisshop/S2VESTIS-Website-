@@ -9,6 +9,11 @@ import {
   adminCreateCategory,
   adminUpdateCategory,
   adminDeleteCategory,
+  adminListHeroSlides,
+  adminCreateHeroSlide,
+  adminUpdateHeroSlide,
+  adminDeleteHeroSlide,
+  adminReorderHeroSlides,
   adminUpload,
   adminStats,
   adminListOrders,
@@ -28,6 +33,11 @@ import {
   createCategoryValidator,
   updateCategoryValidator,
 } from '../validators/categoryValidators.js';
+import {
+  createHeroSlideValidator,
+  updateHeroSlideValidator,
+  reorderHeroSlidesValidator,
+} from '../validators/heroValidators.js';
 import { adminUpdateOrderStatusValidator } from '../validators/orderValidators.js';
 
 const router = Router();
@@ -61,6 +71,13 @@ router.get('/categories', adminListCategories);
 router.post('/categories', createCategoryValidator, validate, adminCreateCategory);
 router.put('/categories/:id', updateCategoryValidator, validate, adminUpdateCategory);
 router.delete('/categories/:id', idParamValidator, validate, adminDeleteCategory);
+
+// Hero slides (home carousel)
+router.get('/hero-slides', adminListHeroSlides);
+router.post('/hero-slides', createHeroSlideValidator, validate, adminCreateHeroSlide);
+router.put('/hero-slides/reorder', reorderHeroSlidesValidator, validate, adminReorderHeroSlides);
+router.put('/hero-slides/:id', updateHeroSlideValidator, validate, adminUpdateHeroSlide);
+router.delete('/hero-slides/:id', idParamValidator, validate, adminDeleteHeroSlide);
 
 // Image upload (accepts up to 10 files under field "images", or single "image")
 router.post(

@@ -2,6 +2,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/ApiError.js';
 import * as productsDb from '../db/products.js';
 import * as categoriesDb from '../db/categories.js';
+import * as heroDb from '../db/heroSlides.js';
 import * as adminDb from '../db/admin.js';
 import * as shippingDb from '../db/shipping.js';
 import { findById } from '../db/users.js';
@@ -96,6 +97,40 @@ export const adminDeleteCategory = asyncHandler(async (req, res) => {
   const deleted = await categoriesDb.deleteCategory(req.params.id);
   if (!deleted) throw ApiError.notFound('Category not found');
   res.json({ success: true, message: 'Category deleted' });
+});
+
+/* ------------------------------- Hero slides ------------------------------ */
+
+// GET /api/admin/hero-slides  (includes inactive)
+export const adminListHeroSlides = asyncHandler(async (_req, res) => {
+  const data = await heroDb.adminListHeroSlides();
+  res.json({ success: true, data });
+});
+
+// POST /api/admin/hero-slides
+export const adminCreateHeroSlide = asyncHandler(async (req, res) => {
+  const slide = await heroDb.createHeroSlide(req.body);
+  res.status(201).json({ success: true, data: slide });
+});
+
+// PUT /api/admin/hero-slides/:id
+export const adminUpdateHeroSlide = asyncHandler(async (req, res) => {
+  const slide = await heroDb.updateHeroSlide(req.params.id, req.body);
+  if (!slide) throw ApiError.notFound('Hero slide not found');
+  res.json({ success: true, data: slide });
+});
+
+// DELETE /api/admin/hero-slides/:id
+export const adminDeleteHeroSlide = asyncHandler(async (req, res) => {
+  const deleted = await heroDb.deleteHeroSlide(req.params.id);
+  if (!deleted) throw ApiError.notFound('Hero slide not found');
+  res.json({ success: true, message: 'Hero slide deleted' });
+});
+
+// PUT /api/admin/hero-slides/reorder   body: { ids: [uuid, ...] }
+export const adminReorderHeroSlides = asyncHandler(async (req, res) => {
+  const data = await heroDb.reorderHeroSlides(req.body.ids);
+  res.json({ success: true, data });
 });
 
 /* --------------------------------- Uploads -------------------------------- */

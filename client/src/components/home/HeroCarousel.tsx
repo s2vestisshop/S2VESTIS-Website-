@@ -2,12 +2,15 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { heroApi } from '@/api/hero';
 import { HERO_INTERVAL, HERO_SLIDES } from '@/data/heroSlides';
 import { onImageError } from '@/lib/product';
 import { cn } from '@/lib/cn';
+import type { HeroSlide } from '@/types';
 
 export function HeroCarousel() {
-  const slides = HERO_SLIDES;
+  // starts from the bundled fallback, then swaps to the admin-managed slides
+  const [slides, setSlides] = useState<HeroSlide[]>(HERO_SLIDES);
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
@@ -31,6 +34,25 @@ export function HeroCarousel() {
 
   const next = useCallback(() => go(index + 1, 1), [go, index]);
   const prev = useCallback(() => go(index - 1, -1), [go, index]);
+
+  // load the live, admin-managed slides; keep the fallback on any failure
+  useEffect(() => {
+    let alive = true;
+    heroApi
+      .list()
+      .then((rows) => {
+        if (alive && rows.length) {
+          setSlides(rows);
+          setIndex(0);
+        }
+      })
+      .catch(() => {
+        /* offline / API down — the bundled HERO_SLIDES stay on screen */
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   // press-and-hold to stop autoplay; drag horizontally to change slide
   const onPointerDown = (e: React.PointerEvent) => {
@@ -68,7 +90,8 @@ export function HeroCarousel() {
     if (e.key === 'ArrowLeft') prev();
   };
 
-  const slide = slides[index];
+  const slide = slides[index] ?? slides[0];
+  if (!slide) return null;
   const alignCenter = slide.align === 'center';
 
   return (
@@ -178,7 +201,7 @@ export function HeroCarousel() {
           <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-2.5">
             {slides.map((s, i) => (
               <button
-                key={s.image}
+                key={s._id ?? `${s.image}-${i}`}
                 type="button"
                 aria-label={`Go to slide ${i + 1}`}
                 aria-current={i === index}

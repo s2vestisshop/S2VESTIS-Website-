@@ -1,5 +1,13 @@
 import { api } from './client';
-import type { AdminOrder, ApiItemResponse, ApiListResponse, Category, Pagination, Product } from '@/types';
+import type {
+  AdminOrder,
+  ApiItemResponse,
+  ApiListResponse,
+  Category,
+  HeroSlide,
+  Pagination,
+  Product,
+} from '@/types';
 
 export interface AdminStats {
   totalProducts: number;
@@ -77,6 +85,32 @@ export const adminApi = {
 
   async deleteCategory(id: string): Promise<void> {
     await api.delete(`/admin/categories/${id}`);
+  },
+
+  async listHeroSlides(): Promise<HeroSlide[]> {
+    const { data } = await api.get<ApiItemResponse<HeroSlide[]>>('/admin/hero-slides');
+    return data.data;
+  },
+
+  async createHeroSlide(payload: Partial<HeroSlide>): Promise<HeroSlide> {
+    const { data } = await api.post<ApiItemResponse<HeroSlide>>('/admin/hero-slides', payload);
+    return data.data;
+  },
+
+  async updateHeroSlide(id: string, payload: Partial<HeroSlide>): Promise<HeroSlide> {
+    const { data } = await api.put<ApiItemResponse<HeroSlide>>(`/admin/hero-slides/${id}`, payload);
+    return data.data;
+  },
+
+  async deleteHeroSlide(id: string): Promise<void> {
+    await api.delete(`/admin/hero-slides/${id}`);
+  },
+
+  async reorderHeroSlides(ids: string[]): Promise<HeroSlide[]> {
+    const { data } = await api.put<ApiItemResponse<HeroSlide[]>>('/admin/hero-slides/reorder', {
+      ids,
+    });
+    return data.data;
   },
 
   async listOrders(

@@ -56,6 +56,7 @@ const AdminCategoriesPage = named(
   () => import('@/pages/admin/AdminCategoriesPage'),
   'AdminCategoriesPage'
 );
+const AdminHeroPage = named(() => import('@/pages/admin/AdminHeroPage'), 'AdminHeroPage');
 const AdminOrdersPage = named(() => import('@/pages/admin/AdminOrdersPage'), 'AdminOrdersPage');
 const AdminOrderDetailPage = named(
   () => import('@/pages/admin/AdminOrderDetailPage'),
@@ -135,6 +136,7 @@ export function AppRoutes() {
           <Route path="products/new" element={<AdminProductFormPage />} />
           <Route path="products/:id/edit" element={<AdminProductFormPage />} />
           <Route path="categories" element={<AdminCategoriesPage />} />
+          <Route path="hero" element={<AdminHeroPage />} />
           <Route path="orders" element={<AdminOrdersPage />} />
           <Route path="orders/:id" element={<AdminOrderDetailPage />} />
         </Route>
