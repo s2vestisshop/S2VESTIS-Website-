@@ -7,6 +7,7 @@ import wishlistRoutes from './wishlistRoutes.js';
 import orderRoutes from './orderRoutes.js';
 import paymentRoutes from './paymentRoutes.js';
 import shippingRoutes from './shippingRoutes.js';
+import contactRoutes from './contactRoutes.js';
 import adminRoutes from './adminRoutes.js';
 
 const router = Router();
@@ -23,6 +24,7 @@ router.use('/wishlist', wishlistRoutes);
 router.use('/orders', orderRoutes);
 router.use('/payments', paymentRoutes);
 router.use('/shipping', shippingRoutes);
+router.use('/contact', contactRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

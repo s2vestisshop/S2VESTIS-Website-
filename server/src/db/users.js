@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcryptjs';
 import { supabase, assertNoError } from '../config/supabase.js';
 
@@ -48,6 +49,29 @@ export async function createUser({ name, email, password }) {
 
 export async function comparePassword(candidate, hash) {
   return bcrypt.compare(candidate, hash);
+}
+
+/** Google has already verified this email — find the matching account, or
+ * create one. New accounts get an unusable random password hash (nothing
+ * generates it a second time); the user can set a real one later via
+ * "forgot password" if they ever also want email/password login. */
+export async function findOrCreateGoogleUser({ email, name }) {
+  const existing = await findByEmail(email);
+  if (existing) return toSafeUser(existing);
+
+  const passwordHash = await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 10);
+  const { data, error } = await supabase
+    .from('users')
+    .insert({
+      name: name || email.split('@')[0],
+      email,
+      password_hash: passwordHash,
+      email_verified: true,
+    })
+    .select('id, name, email, role, created_at')
+    .single();
+  assertNoError(error, 'findOrCreateGoogleUser');
+  return toSafeUser(data);
 }
 
 export async function updatePassword(userId, newPassword) {

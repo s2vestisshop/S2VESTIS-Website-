@@ -1,25 +1,38 @@
 import { useState } from 'react';
-import { Check, Mail, MapPin, MessageSquare } from 'lucide-react';
+import { AlertCircle, Check, Mail, MapPin, MessageSquare } from 'lucide-react';
 import { ContentLayout } from '@/components/common/ContentLayout';
 import { FormField } from '@/components/auth/FormField';
 import { Textarea } from '@/components/admin/fields';
+import { contactApi } from '@/api';
+import { toErrorMessage } from '@/api/client';
 import { isEmail, required } from '@/lib/validate';
 
 export function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     const next: typeof errors = {};
     if (!required(form.name)) next.name = 'Enter your name';
     if (!isEmail(form.email)) next.email = 'Enter a valid email';
     if (form.message.trim().length < 10) next.message = 'A little more detail, please';
     setErrors(next);
     if (Object.keys(next).length) return;
-    // UI only — no message is actually sent in this build
-    setSent(true);
+
+    setSubmitting(true);
+    try {
+      await contactApi.send(form);
+      setSent(true);
+    } catch (err) {
+      setError(toErrorMessage(err));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -29,11 +42,17 @@ export function ContactPage() {
           {sent ? (
             <div className="rounded-card border border-sage-200 bg-sage-50 p-6 text-sm text-sage-700">
               <Check className="mb-2 h-5 w-5" />
-              Thanks{form.name ? `, ${form.name.split(' ')[0]}` : ''}. Your message has been noted —
-              this is a demo form, so nothing is actually sent.
+              Thanks{form.name ? `, ${form.name.split(' ')[0]}` : ''} — your message has been sent.
+              We usually reply within one working day.
             </div>
           ) : (
             <form onSubmit={submit} noValidate className="space-y-4">
+              {error && (
+                <div className="flex items-start gap-2 rounded-card border border-danger/30 bg-danger/5 px-3 py-2.5 text-sm text-danger">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
               <FormField
                 label="Name"
                 value={form.name}
@@ -54,8 +73,8 @@ export function ContactPage() {
                 onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                 error={errors.message}
               />
-              <button type="submit" className="btn-primary">
-                Send message
+              <button type="submit" disabled={submitting} className="btn-primary">
+                {submitting ? 'Sending…' : 'Send message'}
               </button>
             </form>
           )}

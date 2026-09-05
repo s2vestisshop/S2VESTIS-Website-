@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { clearAuthError, login, type AuthRejection } from '@/features/auth/authSlice';
 import { AuthCard, AuthLink } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
+import { isGoogleSignInConfigured } from '@/lib/supabase';
 import { isEmail, required } from '@/lib/validate';
 
 interface LocationState {
@@ -73,6 +75,17 @@ export function LoginPage() {
         </div>
       )}
 
+      {isGoogleSignInConfigured && (
+        <>
+          <GoogleSignInButton />
+          <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-ink-400">
+            <div className="h-px flex-1 bg-ink-100" />
+            or
+            <div className="h-px flex-1 bg-ink-100" />
+          </div>
+        </>
+      )}
+
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <FormField
           label="Email"
@@ -108,11 +121,6 @@ export function LoginPage() {
           {submitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
-
-      <p className="mt-5 rounded-card bg-ink-50 px-3 py-2 text-center text-xs text-ink-500">
-        Demo: <span className="font-medium text-ink-700">user@s2vestis.com</span> /{' '}
-        <span className="font-medium text-ink-700">User@12345</span>
-      </p>
     </AuthCard>
   );
 }

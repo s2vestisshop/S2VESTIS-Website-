@@ -1,6 +1,14 @@
 import asyncHandler from '../utils/asyncHandler.js';
 import ApiError from '../utils/ApiError.js';
-import { findByEmail, createUser, comparePassword, updatePassword, toSafeUser } from '../db/users.js';
+import { supabase } from '../config/supabase.js';
+import {
+  findByEmail,
+  createUser,
+  comparePassword,
+  updatePassword,
+  findOrCreateGoogleUser,
+  toSafeUser,
+} from '../db/users.js';
 import { setAuthCookie, clearAuthCookie } from '../utils/token.js';
 import { mergeGuestCart } from '../db/cart.js';
 import { createToken, findValidToken, markTokenUsed } from '../db/authTokens.js';
@@ -49,6 +57,30 @@ export const logout = asyncHandler(async (_req, res) => {
 // GET /api/auth/me
 export const me = asyncHandler(async (req, res) => {
   res.json({ success: true, user: req.user ?? null });
+});
+
+// POST /api/auth/google — bridges a Supabase-authenticated Google session
+// into our own httpOnly-cookie session (the one every other endpoint relies
+// on). The client sends the Supabase access token it just received from
+// supabase.auth.signInWithOAuth(); we verify it against Supabase itself
+// here and only ever trust the email/name that verification returns — never
+// anything the client claims directly.
+export const googleSignIn = asyncHandler(async (req, res) => {
+  const { accessToken } = req.body;
+
+  const { data, error } = await supabase.auth.getUser(accessToken);
+  if (error || !data?.user?.email) {
+    throw ApiError.unauthorized('Could not verify Google sign-in');
+  }
+
+  const googleUser = data.user;
+  const name = googleUser.user_metadata?.full_name || googleUser.user_metadata?.name || '';
+  const user = await findOrCreateGoogleUser({ email: googleUser.email, name });
+
+  setAuthCookie(res, user._id);
+  await mergeGuestCart(req.guestId, user._id);
+
+  res.json({ success: true, user });
 });
 
 // POST /api/auth/forgot-password — always responds the same way regardless

@@ -171,6 +171,11 @@ async function main() {
       r.status === 400 && Array.isArray(r.json?.errors) && r.json.errors.length > 0
     );
 
+    r = await api('POST', '/api/auth/google', {});
+    check('google sign-in with no token → 400', r.status === 400);
+    r = await api('POST', '/api/auth/google', { accessToken: 'not-a-real-supabase-token' });
+    check('google sign-in with a bogus token → 401', r.status === 401);
+
     r = await api('GET', '/api/cart');
     check('guest GET /api/cart → empty', r.json?.cart?.items?.length === 0);
 
@@ -229,6 +234,15 @@ async function main() {
     check('wishlist add is idempotent', r.json?.data?.count === 1);
     r = await api('DELETE', `/api/wishlist/remove/${detail._id}`);
     check('wishlist remove → 0', r.json?.data?.count === 0);
+
+    r = await api('POST', '/api/contact', {
+      name: 'Smoke Tester',
+      email: 'smoke@test.com',
+      message: 'This is a smoke-test message with enough length.',
+    });
+    check('contact form submit → 201', r.status === 201, JSON.stringify(r.json));
+    r = await api('POST', '/api/contact', { name: '', email: 'bad', message: 'short' });
+    check('contact form validation → 400', r.status === 400);
 
     // ---- payments (user still has 3 cart items from the merge) ----
     // Orders are no longer created directly — only via a verified Razorpay

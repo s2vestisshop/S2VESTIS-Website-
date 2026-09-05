@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { formatPrice } from '@/lib/format';
 
 const FREE_SHIP_THRESHOLD = 1999;
+const FLAT_SHIPPING = 99;
 
 interface Props {
   subtotal: number;
@@ -22,6 +23,8 @@ export function OrderSummary({
 }: Props) {
   const freeShipping = subtotal >= FREE_SHIP_THRESHOLD || subtotal === 0;
   const away = Math.max(0, FREE_SHIP_THRESHOLD - subtotal);
+  const shipping = freeShipping ? 0 : FLAT_SHIPPING;
+  const total = subtotal + shipping;
 
   return (
     <div className="rounded-card border border-ink-100 bg-surface p-5 sm:p-6">
@@ -37,7 +40,7 @@ export function OrderSummary({
         <div className="flex justify-between">
           <dt className="text-ink-500">Shipping</dt>
           <dd className="font-medium text-ink-900">
-            {subtotal === 0 ? '—' : freeShipping ? 'Free' : 'Calculated at checkout'}
+            {subtotal === 0 ? '—' : freeShipping ? 'Free' : formatPrice(shipping)}
           </dd>
         </div>
       </dl>
@@ -49,10 +52,10 @@ export function OrderSummary({
       )}
 
       <div className="mt-4 flex items-baseline justify-between border-t border-ink-100 pt-4">
-        <span className="text-sm font-semibold text-ink-900">Estimated total</span>
-        <span className="text-lg font-bold text-ink-900">{formatPrice(subtotal)}</span>
+        <span className="text-sm font-semibold text-ink-900">Total to pay</span>
+        <span className="text-lg font-bold text-ink-900">{formatPrice(total)}</span>
       </div>
-      <p className="mt-1 text-[11px] text-ink-400">Taxes calculated at checkout.</p>
+      <p className="mt-1 text-[11px] text-ink-400">Includes shipping.</p>
 
       {action &&
         (action.to ? (

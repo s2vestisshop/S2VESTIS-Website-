@@ -23,6 +23,7 @@ const ForgotPasswordPage = named(
   'ForgotPasswordPage'
 );
 const ResetPasswordPage = named(() => import('@/pages/ResetPasswordPage'), 'ResetPasswordPage');
+const AuthCallbackPage = named(() => import('@/pages/AuthCallbackPage'), 'AuthCallbackPage');
 const AccountPage = named(() => import('@/pages/AccountPage'), 'AccountPage');
 const OrdersPage = named(() => import('@/pages/account/OrdersPage'), 'OrdersPage');
 const OrderDetailPage = named(() => import('@/pages/account/OrderDetailPage'), 'OrderDetailPage');
@@ -82,6 +83,7 @@ export function AppRoutes() {
         <Route path="register" element={<RegisterPage />} />
         <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="reset-password" element={<ResetPasswordPage />} />
+        <Route path="auth/callback" element={<AuthCallbackPage />} />
 
         {/* content pages */}
         <Route path="about" element={<AboutPage />} />

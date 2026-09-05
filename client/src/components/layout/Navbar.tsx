@@ -75,6 +75,15 @@ export function Navbar() {
   const scheduleClose = () => {
     closeTimer.current = window.setTimeout(() => setMenuOpen(false), 120);
   };
+  // A tap fires a synthetic hover (openMenu) immediately followed by a click —
+  // if click also navigated away, the menu would flash open and be
+  // unreachable on touch. Toggling on click instead makes tap reliably open
+  // (and re-tapping close) the menu on any device; "View everything" inside
+  // the menu covers the old "go straight to /products" shortcut.
+  const toggleMenu = () => {
+    window.clearTimeout(closeTimer.current);
+    setMenuOpen((v) => !v);
+  };
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,7 +129,8 @@ export function Navbar() {
                 className="py-2 text-sm font-medium text-ink-800 link-underline"
                 onMouseEnter={openMenu}
                 onFocus={openMenu}
-                onClick={() => navigate('/products')}
+                onClick={toggleMenu}
+                aria-expanded={menuOpen}
               >
                 Shop
               </button>

@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { clearAuthError, register, type AuthRejection } from '@/features/auth/authSlice';
 import { AuthCard, AuthLink } from '@/components/auth/AuthCard';
 import { FormField } from '@/components/auth/FormField';
+import { GoogleSignInButton } from '@/components/auth/GoogleSignInButton';
+import { isGoogleSignInConfigured } from '@/lib/supabase';
 import { isEmail, minLen, required } from '@/lib/validate';
 
 interface LocationState {
@@ -84,6 +86,17 @@ export function RegisterPage() {
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>{banner}</span>
         </div>
+      )}
+
+      {isGoogleSignInConfigured && (
+        <>
+          <GoogleSignInButton />
+          <div className="my-5 flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-ink-400">
+            <div className="h-px flex-1 bg-ink-100" />
+            or
+            <div className="h-px flex-1 bg-ink-100" />
+          </div>
+        </>
       )}
 
       <form onSubmit={onSubmit} noValidate className="space-y-4">

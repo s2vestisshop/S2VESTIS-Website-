@@ -52,7 +52,7 @@ export function HeroCarousel() {
       onKeyDown={onKeyDown}
       tabIndex={0}
     >
-      <div className="relative h-[76vh] min-h-[520px] w-full sm:h-[80vh] lg:h-[86vh]">
+      <div className="relative h-[52vh] min-h-[380px] w-full sm:h-[80vh] lg:h-[86vh]">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={index}

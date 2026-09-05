@@ -6,4 +6,5 @@ export { cartApi } from './cart';
 export { wishlistApi } from './wishlist';
 export { ordersApi } from './orders';
 export { paymentsApi } from './payments';
+export { contactApi } from './contact';
 export { adminApi } from './admin';
