@@ -113,9 +113,6 @@ export function ShippingReturnsPage() {
         Email <a href="mailto:help@s2vestis.com">help@s2vestis.com</a> with your order number and a
         photo within 48 hours of delivery and we'll sort it immediately.
       </p>
-      <p className="text-xs text-ink-400">
-        This is a demonstration store — no real orders are shipped and no payments are taken.
-      </p>
     </ContentLayout>
   );
 }

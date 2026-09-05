@@ -27,7 +27,7 @@ export function AdminDashboardPage() {
           ? [
               ['Total products', stats.totalProducts],
               ['Active', stats.activeProducts],
-              ['Categories', stats.totalCategories],
+              ['Orders', stats.totalOrders],
               [`Low stock (≤${stats.lowStockThreshold})`, stats.lowStockCount],
             ].map(([label, value]) => (
               <div key={label} className="rounded-card border border-ink-100 bg-surface p-5">

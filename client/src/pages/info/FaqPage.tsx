@@ -11,7 +11,7 @@ const FAQS = [
   {
     title: 'When will my order arrive?',
     content:
-      'Standard delivery is 3–6 working days. Orders placed before 2pm on a working day are dispatched the same day. (This is a demo store, so nothing actually ships.)',
+      'Standard delivery is 3–6 working days. Orders placed before 2pm on a working day are dispatched the same day. Once your order ships, tracking is available from your order page.',
   },
   {
     title: 'What is the return policy?',
@@ -31,7 +31,7 @@ const FAQS = [
   {
     title: 'Can I change or cancel an order?',
     content:
-      'In a real store, yes — within a short window before dispatch. In this demo, placing an order just records it on your account and empties your cart.',
+      "Yes — contact us within a short window before dispatch and we'll cancel or amend it for you.",
   },
 ];
 

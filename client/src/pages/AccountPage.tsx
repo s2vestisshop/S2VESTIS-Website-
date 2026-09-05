@@ -49,7 +49,7 @@ export function AccountPage() {
             to="/account/orders"
             icon={Package}
             label="Orders"
-            meta="Your demo order history"
+            meta="Track and review your orders"
           />
           {user.role === 'admin' && (
             <AccountTile to="/admin" icon={LayoutDashboard} label="Admin panel" meta="Manage catalogue" />

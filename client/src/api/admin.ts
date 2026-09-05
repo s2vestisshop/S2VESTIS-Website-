@@ -7,7 +7,7 @@ export interface AdminStats {
   inactiveProducts: number;
   totalCategories: number;
   totalUsers: number;
-  demoOrders: number;
+  totalOrders: number;
   lowStockThreshold: number;
   lowStockCount: number;
   lowStock: { _id: string; name: string; slug: string; stock: number }[];
