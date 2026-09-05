@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, Menu, Search, ShoppingBag, User, X } from 'lucide-react';
@@ -58,8 +59,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [term, setTerm] = useState('');
   const closeTimer = useRef<number | undefined>(undefined);
+  const mobileSearchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -67,6 +70,11 @@ export function Navbar() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // focus the field when the mobile search bar expands
+  useEffect(() => {
+    if (mobileSearchOpen) mobileSearchRef.current?.focus();
+  }, [mobileSearchOpen]);
 
   const openMenu = () => {
     window.clearTimeout(closeTimer.current);
@@ -91,6 +99,7 @@ export function Navbar() {
     navigate(productsHref({ search: q || undefined }));
     setTerm('');
     dispatch(setMobileMenu(false));
+    setMobileSearchOpen(false);
   };
 
   return (
@@ -118,6 +127,16 @@ export function Navbar() {
               onClick={() => dispatch(setMobileMenu(true))}
             >
               <Menu className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              aria-label="Search"
+              aria-expanded={mobileSearchOpen}
+              onClick={() => setMobileSearchOpen((v) => !v)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full text-ink-800 transition-colors hover:bg-ink-100 focus-visible:rounded-full lg:hidden"
+            >
+              {mobileSearchOpen ? <X className="h-5 w-5" /> : <Search className="h-5 w-5" />}
             </button>
 
             <nav
@@ -223,6 +242,32 @@ export function Navbar() {
             </div>
           </div>
         </div>
+
+        {/* mobile search bar — expands under the top row */}
+        <AnimatePresence initial={false}>
+          {mobileSearchOpen && (
+            <motion.form
+              key="mobile-search"
+              onSubmit={submitSearch}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden lg:hidden"
+            >
+              <div className="relative flex items-center pb-3">
+                <Search className="pointer-events-none absolute left-3 h-4 w-4 text-ink-400" />
+                <input
+                  ref={mobileSearchRef}
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  placeholder="Search products"
+                  className="h-11 w-full rounded-pill border border-ink-200 bg-surface pl-9 pr-3 text-sm placeholder:text-ink-400 focus:border-ink-400 focus:outline-none"
+                />
+              </div>
+            </motion.form>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* desktop mega menu */}
@@ -234,20 +279,25 @@ export function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* mobile drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <MobileMenu
-            categories={categories}
-            term={term}
-            setTerm={setTerm}
-            onSearch={submitSearch}
-            onClose={() => dispatch(setMobileMenu(false))}
-            user={user}
-            onLogout={() => dispatch(logout())}
-          />
-        )}
-      </AnimatePresence>
+      {/* mobile drawer — portalled to <body> so it escapes the header's
+          backdrop-blur containing block (otherwise `fixed inset-0` is clipped
+          to the header box and the drawer hides behind the hero). */}
+      {createPortal(
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <MobileMenu
+              categories={categories}
+              term={term}
+              setTerm={setTerm}
+              onSearch={submitSearch}
+              onClose={() => dispatch(setMobileMenu(false))}
+              user={user}
+              onLogout={() => dispatch(logout())}
+            />
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </header>
   );
 }
@@ -277,6 +327,18 @@ function MobileMenu({
   user: { email: string; role: string } | null;
   onLogout: () => void;
 }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKey);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <motion.div className="fixed inset-0 z-[60] lg:hidden" initial={false}>
       <motion.div

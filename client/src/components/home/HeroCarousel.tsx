@@ -52,7 +52,7 @@ export function HeroCarousel() {
       onKeyDown={onKeyDown}
       tabIndex={0}
     >
-      <div className="relative h-[52vh] min-h-[380px] w-full sm:h-[80vh] lg:h-[86vh]">
+      <div className="relative h-[42vh] min-h-[300px] w-full sm:h-[80vh] lg:h-[86vh]">
         <AnimatePresence initial={false} custom={direction}>
           <motion.div
             key={index}
@@ -96,17 +96,22 @@ export function HeroCarousel() {
               )}
             >
               {slide.eyebrow && (
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-clay-200">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-clay-200 sm:text-xs">
                   {slide.eyebrow}
                 </p>
               )}
-              <h1 className="mt-4 text-4xl font-bold leading-[1.05] text-canvas sm:text-5xl lg:text-6xl">
+              <h1 className="mt-2 text-2xl font-bold leading-[1.1] text-canvas sm:mt-4 sm:text-5xl sm:leading-[1.05] lg:text-6xl">
                 {slide.title}
               </h1>
-              <p className={cn('mt-5 text-base text-ink-100', alignCenter ? 'mx-auto max-w-md' : 'max-w-md')}>
+              <p
+                className={cn(
+                  'mt-2.5 text-sm text-ink-100 sm:mt-5 sm:text-base',
+                  alignCenter ? 'mx-auto max-w-md' : 'max-w-md'
+                )}
+              >
                 {slide.subtitle}
               </p>
-              <div className={cn('mt-8 flex flex-wrap gap-3', alignCenter && 'justify-center')}>
+              <div className={cn('mt-4 flex flex-wrap gap-3 sm:mt-8', alignCenter && 'justify-center')}>
                 <Link to={slide.ctaLink} className="btn-accent">
                   {slide.ctaText}
                   <ArrowRight className="h-4 w-4" />
