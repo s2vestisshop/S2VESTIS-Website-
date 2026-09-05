@@ -9,6 +9,7 @@ import paymentRoutes from './paymentRoutes.js';
 import shippingRoutes from './shippingRoutes.js';
 import contactRoutes from './contactRoutes.js';
 import heroRoutes from './heroRoutes.js';
+import announcementRoutes from './announcementRoutes.js';
 import adminRoutes from './adminRoutes.js';
 
 const router = Router();
@@ -27,6 +28,7 @@ router.use('/payments', paymentRoutes);
 router.use('/shipping', shippingRoutes);
 router.use('/contact', contactRoutes);
 router.use('/hero-slides', heroRoutes);
+router.use('/announcements', announcementRoutes);
 router.use('/admin', adminRoutes);
 
 export default router;

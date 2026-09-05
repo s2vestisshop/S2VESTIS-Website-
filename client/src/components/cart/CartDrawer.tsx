@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { closeCartDrawer } from '@/features/ui/uiSlice';
 import { removeCartItem, updateCartItem } from '@/features/cart/cartSlice';
 import { formatPrice, pluralize } from '@/lib/format';
+import { cartTotals } from '@/lib/cart';
 import { productImage, onImageError } from '@/lib/product';
 import { QuantityStepper } from './QuantityStepper';
 import type { CartItem } from '@/types';
@@ -78,10 +79,27 @@ export function CartDrawer() {
                 </ul>
 
                 <footer className="border-t border-ink-100 px-5 py-5">
-                  <div className="mb-1 flex items-center justify-between text-sm">
-                    <span className="text-ink-500">Subtotal</span>
-                    <span className="font-semibold text-ink-900">{formatPrice(subtotal)}</span>
-                  </div>
+                  {(() => {
+                    const t = cartTotals(items, subtotal);
+                    return (
+                      <>
+                        {t.savings > 0 && (
+                          <div className="mb-1 flex items-center justify-between text-sm">
+                            <span className="text-ink-500">You save</span>
+                            <span className="font-semibold text-sage-600">
+                              −{formatPrice(t.savings)}
+                            </span>
+                          </div>
+                        )}
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <span className="text-ink-500">Subtotal</span>
+                          <span className="font-semibold text-ink-900">
+                            {formatPrice(t.subtotal)}
+                          </span>
+                        </div>
+                      </>
+                    );
+                  })()}
                   <p className="mb-4 text-xs text-ink-400">
                     Shipping &amp; taxes calculated at checkout.
                   </p>

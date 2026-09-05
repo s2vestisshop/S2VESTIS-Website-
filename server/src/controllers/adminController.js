@@ -3,6 +3,7 @@ import ApiError from '../utils/ApiError.js';
 import * as productsDb from '../db/products.js';
 import * as categoriesDb from '../db/categories.js';
 import * as heroDb from '../db/heroSlides.js';
+import * as announcementsDb from '../db/announcements.js';
 import * as adminDb from '../db/admin.js';
 import * as shippingDb from '../db/shipping.js';
 import { findById } from '../db/users.js';
@@ -130,6 +131,40 @@ export const adminDeleteHeroSlide = asyncHandler(async (req, res) => {
 // PUT /api/admin/hero-slides/reorder   body: { ids: [uuid, ...] }
 export const adminReorderHeroSlides = asyncHandler(async (req, res) => {
   const data = await heroDb.reorderHeroSlides(req.body.ids);
+  res.json({ success: true, data });
+});
+
+/* ------------------------------ Announcements ----------------------------- */
+
+// GET /api/admin/announcements  (includes inactive)
+export const adminListAnnouncements = asyncHandler(async (_req, res) => {
+  const data = await announcementsDb.adminListAnnouncements();
+  res.json({ success: true, data });
+});
+
+// POST /api/admin/announcements
+export const adminCreateAnnouncement = asyncHandler(async (req, res) => {
+  const item = await announcementsDb.createAnnouncement(req.body);
+  res.status(201).json({ success: true, data: item });
+});
+
+// PUT /api/admin/announcements/:id
+export const adminUpdateAnnouncement = asyncHandler(async (req, res) => {
+  const item = await announcementsDb.updateAnnouncement(req.params.id, req.body);
+  if (!item) throw ApiError.notFound('Announcement not found');
+  res.json({ success: true, data: item });
+});
+
+// DELETE /api/admin/announcements/:id
+export const adminDeleteAnnouncement = asyncHandler(async (req, res) => {
+  const deleted = await announcementsDb.deleteAnnouncement(req.params.id);
+  if (!deleted) throw ApiError.notFound('Announcement not found');
+  res.json({ success: true, message: 'Announcement deleted' });
+});
+
+// PUT /api/admin/announcements/reorder   body: { ids: [uuid, ...] }
+export const adminReorderAnnouncements = asyncHandler(async (req, res) => {
+  const data = await announcementsDb.reorderAnnouncements(req.body.ids);
   res.json({ success: true, data });
 });
 

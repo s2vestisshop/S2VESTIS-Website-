@@ -24,6 +24,15 @@ export interface Category {
   productCount?: number;
 }
 
+export interface Announcement {
+  _id?: string;
+  text: string;
+  /** optional — makes the message a link */
+  href?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
 export interface HeroSlide {
   /** present on records from the API; absent on the bundled fallback list */
   _id?: string;

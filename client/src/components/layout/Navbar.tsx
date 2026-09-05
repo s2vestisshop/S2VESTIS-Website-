@@ -10,6 +10,7 @@ import { useCategories } from '@/hooks/useCategories';
 import { GENDERS, productsHref } from '@/lib/nav';
 import { cn } from '@/lib/cn';
 import { Logo } from '@/components/common/Logo';
+import { AnnouncementBar } from './AnnouncementBar';
 import { MegaMenu } from './MegaMenu';
 
 function IconButton({
@@ -109,12 +110,8 @@ export function Navbar() {
         scrolled && 'shadow-[0_1px_0_rgba(23,22,20,0.08)]'
       )}
     >
-      {/* announcement strip */}
-      <div className="bg-ink-900 text-canvas">
-        <p className="container-page py-2 text-center text-[11px] font-medium uppercase tracking-widest">
-          Free shipping over ₹1999 · Easy 15-day returns
-        </p>
-      </div>
+      {/* announcement strip (admin-managed, rotating) */}
+      <AnnouncementBar />
 
       <div className="container-page">
         <div className="flex h-16 items-center justify-between gap-4 lg:h-20">

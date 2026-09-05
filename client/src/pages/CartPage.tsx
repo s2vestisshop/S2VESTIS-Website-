@@ -117,6 +117,7 @@ export function CartPage() {
 
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <OrderSummary
+              items={items}
               subtotal={subtotal}
               count={count}
               action={{ label: 'Proceed to checkout', to: '/checkout' }}

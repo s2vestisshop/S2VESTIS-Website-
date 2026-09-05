@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 import { QuantityStepper } from './QuantityStepper';
 import { PriceTag } from '@/components/product/PriceTag';
 import { formatPrice } from '@/lib/format';
+import { lineSavings } from '@/lib/cart';
 import { productImage, onImageError } from '@/lib/product';
 import type { CartItem } from '@/types';
 
@@ -22,6 +23,7 @@ export function CartLineItem({ item, pending, onQty, onRemove }: Props) {
   );
   const stock =
     variant?.sizes.find((s) => s.size.toLowerCase() === item.size.toLowerCase())?.stock ?? 0;
+  const saved = lineSavings(item);
 
   return (
     <div className="flex gap-4 py-6">
@@ -58,9 +60,7 @@ export function CartLineItem({ item, pending, onQty, onRemove }: Props) {
                 Edit
               </Link>
             </p>
-            {product && (
-              <PriceTag product={product} size="sm" className="mt-2 sm:hidden" />
-            )}
+            {product && <PriceTag product={product} size="sm" className="mt-2" />}
           </div>
 
           <button
@@ -84,8 +84,9 @@ export function CartLineItem({ item, pending, onQty, onRemove }: Props) {
           />
           <div className="text-right">
             <p className="text-sm font-semibold text-ink-900">{formatPrice(item.lineTotal)}</p>
-            {item.quantity > 1 && (
-              <p className="text-[11px] text-ink-400">{formatPrice(item.priceAtAdd)} each</p>
+            <p className="text-[11px] text-ink-400">{formatPrice(item.priceAtAdd)} each</p>
+            {saved > 0 && (
+              <p className="text-[11px] font-semibold text-sage-600">Saved {formatPrice(saved)}</p>
             )}
           </div>
         </div>

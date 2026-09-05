@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Instagram, Facebook, Youtube, Check } from 'lucide-react';
+import { Instagram, Youtube, Check } from 'lucide-react';
 import { useCategories } from '@/hooks/useCategories';
 import { productsHref } from '@/lib/nav';
 
@@ -17,6 +17,12 @@ const HELP = [
   { label: 'FAQ', to: '/faq' },
   { label: 'Track Order', to: '/track' },
 ];
+
+const CONTACT_EMAIL = 'subhamkr756@gmail.com';
+const SOCIAL = {
+  instagram: 'https://www.instagram.com/s2vestis?igsi=MTJiYXl4Zzh3cHp0NA==',
+  youtube: 'https://youtube.com/@s2vestis?si=f6RqvLA7V2R_0Ib6',
+};
 
 export function Footer() {
   const { categories } = useCategories();
@@ -40,9 +46,21 @@ export function Footer() {
             <p className="font-display text-xl font-bold tracking-[0.12em] text-ink-900">
               S2VESTIS
             </p>
+            <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-400">
+              Premium Clothing Co. · Estd. 2024
+            </p>
             <p className="mt-3 max-w-xs text-sm text-ink-500">
               Considered apparel — everyday essentials cut from premium fabric and built to last
               wash after wash.
+            </p>
+            <p className="mt-3 text-sm text-ink-500">
+              Questions?{' '}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="text-ink-700 underline-offset-2 hover:text-ink-900 hover:underline"
+              >
+                {CONTACT_EMAIL}
+              </a>
             </p>
             <form onSubmit={submit} className="mt-6 max-w-sm">
               <label htmlFor="newsletter" className="text-xs font-semibold uppercase tracking-widest text-ink-400">
@@ -105,13 +123,22 @@ export function Footer() {
             </Link>
           </p>
           <div className="flex items-center gap-4 text-ink-500">
-            <a href="https://instagram.com" aria-label="Instagram" className="hover:text-ink-900">
+            <a
+              href={SOCIAL.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="hover:text-ink-900"
+            >
               <Instagram className="h-5 w-5" />
             </a>
-            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-ink-900">
-              <Facebook className="h-5 w-5" />
-            </a>
-            <a href="https://youtube.com" aria-label="YouTube" className="hover:text-ink-900">
+            <a
+              href={SOCIAL.youtube}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="hover:text-ink-900"
+            >
               <Youtube className="h-5 w-5" />
             </a>
           </div>

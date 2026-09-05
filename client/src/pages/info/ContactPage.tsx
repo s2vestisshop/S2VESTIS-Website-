@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle, Check, Mail, MapPin, MessageSquare } from 'lucide-react';
+import { AlertCircle, Check, Mail, MessageSquare } from 'lucide-react';
 import { ContentLayout } from '@/components/common/ContentLayout';
 import { FormField } from '@/components/auth/FormField';
 import { Textarea } from '@/components/admin/fields';
@@ -83,15 +83,18 @@ export function ContactPage() {
         <aside className="space-y-4 text-sm text-ink-600">
           <p className="flex items-start gap-2.5">
             <Mail className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
-            <a href="mailto:help@s2vestis.com">help@s2vestis.com</a>
+            <span>
+              <a href="mailto:subhamkr756@gmail.com" className="hover:text-ink-900">
+                subhamkr756@gmail.com
+              </a>
+              <span className="mt-0.5 block text-xs text-ink-400">
+                Shubham Kumar · we reply within one working day
+              </span>
+            </span>
           </p>
           <p className="flex items-start gap-2.5">
             <MessageSquare className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
-            Live chat, Mon–Fri 10:00–18:00 IST
-          </p>
-          <p className="flex items-start gap-2.5">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-ink-400" />
-            Kala Ghoda, Fort, Mumbai 400001
+            Support hours: Mon–Sat, 10:00–18:00 IST
           </p>
         </aside>
       </div>

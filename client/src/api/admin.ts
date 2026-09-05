@@ -1,6 +1,7 @@
 import { api } from './client';
 import type {
   AdminOrder,
+  Announcement,
   ApiItemResponse,
   ApiListResponse,
   Category,
@@ -108,6 +109,35 @@ export const adminApi = {
 
   async reorderHeroSlides(ids: string[]): Promise<HeroSlide[]> {
     const { data } = await api.put<ApiItemResponse<HeroSlide[]>>('/admin/hero-slides/reorder', {
+      ids,
+    });
+    return data.data;
+  },
+
+  async listAnnouncements(): Promise<Announcement[]> {
+    const { data } = await api.get<ApiItemResponse<Announcement[]>>('/admin/announcements');
+    return data.data;
+  },
+
+  async createAnnouncement(payload: Partial<Announcement>): Promise<Announcement> {
+    const { data } = await api.post<ApiItemResponse<Announcement>>('/admin/announcements', payload);
+    return data.data;
+  },
+
+  async updateAnnouncement(id: string, payload: Partial<Announcement>): Promise<Announcement> {
+    const { data } = await api.put<ApiItemResponse<Announcement>>(
+      `/admin/announcements/${id}`,
+      payload
+    );
+    return data.data;
+  },
+
+  async deleteAnnouncement(id: string): Promise<void> {
+    await api.delete(`/admin/announcements/${id}`);
+  },
+
+  async reorderAnnouncements(ids: string[]): Promise<Announcement[]> {
+    const { data } = await api.put<ApiItemResponse<Announcement[]>>('/admin/announcements/reorder', {
       ids,
     });
     return data.data;

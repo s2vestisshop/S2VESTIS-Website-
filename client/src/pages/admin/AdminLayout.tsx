@@ -1,6 +1,13 @@
 import { Suspense } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { GalleryHorizontalEnd, LayoutDashboard, Package, Receipt, Tags } from 'lucide-react';
+import {
+  GalleryHorizontalEnd,
+  LayoutDashboard,
+  Megaphone,
+  Package,
+  Receipt,
+  Tags,
+} from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { PageFallback } from '@/components/common/PageFallback';
 
@@ -9,6 +16,7 @@ const NAV = [
   { to: '/admin/products', label: 'Products', icon: Package, end: false },
   { to: '/admin/categories', label: 'Categories', icon: Tags, end: false },
   { to: '/admin/hero', label: 'Hero', icon: GalleryHorizontalEnd, end: false },
+  { to: '/admin/announcements', label: 'Announcements', icon: Megaphone, end: false },
   { to: '/admin/orders', label: 'Orders', icon: Receipt, end: false },
 ];
 

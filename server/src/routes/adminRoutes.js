@@ -14,6 +14,11 @@ import {
   adminUpdateHeroSlide,
   adminDeleteHeroSlide,
   adminReorderHeroSlides,
+  adminListAnnouncements,
+  adminCreateAnnouncement,
+  adminUpdateAnnouncement,
+  adminDeleteAnnouncement,
+  adminReorderAnnouncements,
   adminUpload,
   adminStats,
   adminListOrders,
@@ -38,6 +43,11 @@ import {
   updateHeroSlideValidator,
   reorderHeroSlidesValidator,
 } from '../validators/heroValidators.js';
+import {
+  createAnnouncementValidator,
+  updateAnnouncementValidator,
+  reorderAnnouncementsValidator,
+} from '../validators/announcementValidators.js';
 import { adminUpdateOrderStatusValidator } from '../validators/orderValidators.js';
 
 const router = Router();
@@ -78,6 +88,18 @@ router.post('/hero-slides', createHeroSlideValidator, validate, adminCreateHeroS
 router.put('/hero-slides/reorder', reorderHeroSlidesValidator, validate, adminReorderHeroSlides);
 router.put('/hero-slides/:id', updateHeroSlideValidator, validate, adminUpdateHeroSlide);
 router.delete('/hero-slides/:id', idParamValidator, validate, adminDeleteHeroSlide);
+
+// Announcements (top strip)
+router.get('/announcements', adminListAnnouncements);
+router.post('/announcements', createAnnouncementValidator, validate, adminCreateAnnouncement);
+router.put(
+  '/announcements/reorder',
+  reorderAnnouncementsValidator,
+  validate,
+  adminReorderAnnouncements
+);
+router.put('/announcements/:id', updateAnnouncementValidator, validate, adminUpdateAnnouncement);
+router.delete('/announcements/:id', idParamValidator, validate, adminDeleteAnnouncement);
 
 // Image upload (accepts up to 10 files under field "images", or single "image")
 router.post(

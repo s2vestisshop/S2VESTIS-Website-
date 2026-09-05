@@ -8,4 +8,5 @@ export { ordersApi } from './orders';
 export { paymentsApi } from './payments';
 export { contactApi } from './contact';
 export { heroApi } from './hero';
+export { announcementsApi } from './announcements';
 export { adminApi } from './admin';

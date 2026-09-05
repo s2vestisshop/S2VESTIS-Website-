@@ -64,7 +64,7 @@ Postgres exclusively through `@supabase/supabase-js` and the RPC functions below
 | Commerce | `coupons`, `coupon_redemptions`, `addresses` (one default per user) |
 | Engagement | `stock_notifications`, `recently_viewed` (capped at 30/user) |
 | Messaging | `newsletter_subscribers`, `contact_messages`, `email_outbox` |
-| Content | `hero_slides` (home hero carousel — admin-managed) |
+| Content | `hero_slides` (home hero carousel), `announcements` (top strip) — both admin-managed |
 
 `products.effective_price`, `products.discount_percent` and `products.search_tsv`
 are **generated columns** — no application logic needed to keep them in sync.
@@ -118,3 +118,4 @@ All of the above are `service_role`-only (revoked from `anon`/`authenticated`) e
 | `…0014_rename_role_customer_to_user` | aligns `user_role`'s label with the frontend's `Role` type (`'user' \| 'admin'`) |
 | `…0015_fix_size_order` | `product_json()` fix — order variant sizes by apparel order (XS…XXL), not alphabetically |
 | `…20260905000008_hero_slides` | `hero_slides` table + RLS read policy + seed of the four launch slides — home hero carousel, managed from Admin → Hero (`/api/hero-slides`, `/api/admin/hero-slides`). Not truncated by `reseed_demo_data()`. |
+| `…20260906000001_announcements` | `announcements` table + RLS read policy + seed of two strip messages — the rotating bar above the navbar, managed from Admin → Announcements (`/api/announcements`, `/api/admin/announcements`). Not truncated by `reseed_demo_data()`. |

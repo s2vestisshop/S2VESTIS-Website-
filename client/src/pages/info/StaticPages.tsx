@@ -111,7 +111,7 @@ export function ShippingReturnsPage() {
       </ul>
       <h2>Damaged or wrong item</h2>
       <p>
-        Email <a href="mailto:help@s2vestis.com">help@s2vestis.com</a> with your order number and a
+        Email <a href="mailto:subhamkr756@gmail.com">subhamkr756@gmail.com</a> with your order number and a
         photo within 48 hours of delivery and we'll sort it immediately.
       </p>
     </ContentLayout>
@@ -180,9 +180,9 @@ export function PrivacyPolicyPage() {
       </p>
       <h2>Grievance officer</h2>
       <p>
-        For any privacy concerns or complaints, contact us at{' '}
-        <a href="mailto:help@s2vestis.com">help@s2vestis.com</a>. We aim to acknowledge complaints
-        within 48 hours.
+        For any privacy concerns or complaints, contact Shubham Kumar at{' '}
+        <a href="mailto:subhamkr756@gmail.com">subhamkr756@gmail.com</a>. We aim to acknowledge
+        complaints within 48 hours.
       </p>
       <p className="text-xs text-ink-400">
         This policy is a plain-language starting point and hasn't been reviewed by a lawyer — have
@@ -233,7 +233,7 @@ export function TermsPage() {
       <h2>Contact</h2>
       <p>
         Questions about these terms? Email{' '}
-        <a href="mailto:help@s2vestis.com">help@s2vestis.com</a>.
+        <a href="mailto:subhamkr756@gmail.com">subhamkr756@gmail.com</a>.
       </p>
       <p className="text-xs text-ink-400">
         These terms are a plain-language starting point and haven't been reviewed by a lawyer —
